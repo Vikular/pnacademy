@@ -13,6 +13,8 @@ import { CommunityPage } from "./components/CommunityPage";
 import { DebugPanel } from "./components/DebugPanel";
 import { ServerDiagnostics } from "./components/ServerDiagnostics";
 import { AuthTester } from "./components/AuthTester";
+import { AdminBootstrap } from "./components/AdminBootstrap";
+import { Button } from "./components/ui/button";
 import {
   projectId,
   publicAnonKey,
@@ -28,7 +30,8 @@ type View =
   | "courses"
   | "beginners"
   | "strategy"
-  | "community";
+  | "community"
+  | "admin-setup";
 
 interface UserProfile {
   userId: string;
@@ -250,6 +253,13 @@ export default function App() {
         );
         console.log("🔐 Login attempt with email:", email);
 
+        // Check if this is the hardcoded admin attempting to login
+        const isAdminCredentials = 
+          email.trim().toLowerCase() === 'admin@pipnationacademy.com' && 
+          password === 'Admin123!';
+
+        console.log("🔍 Before login - isAdminCredentials:", isAdminCredentials);
+
         const { data, error } =
           await supabase.auth.signInWithPassword({
             email: email.trim().toLowerCase(), // Normalize email
@@ -262,9 +272,109 @@ export default function App() {
             "❌ Error details:",
             JSON.stringify(error, null, 2),
           );
-          toast.error(
-            error.message || "Invalid email or password",
-          );
+          
+          console.log("🔍 Debug - Checking admin credentials:");
+          console.log("  Email entered:", email);
+          console.log("  Email normalized:", email.trim().toLowerCase());
+          console.log("  Password entered:", password);
+          console.log("  Email match:", email.trim().toLowerCase() === 'admin@pipnationacademy.com');
+          console.log("  Password match:", password === 'Admin123!');
+          console.log("  Error code:", error.code);
+          console.log("  Error message:", error.message);
+          
+          // If admin credentials and account doesn't exist, auto-create it
+          if (isAdminCredentials && (error.message?.includes("Invalid login credentials") || error.code === "invalid_credentials")) {
+            console.log("🔐 Admin credentials detected, auto-creating admin account...");
+            toast.info("Setting up your admin account...", { duration: 3000 });
+            
+            try {
+              // Create admin account via bootstrap endpoint
+              const bootstrapResponse = await fetch(
+                `${apiUrl}/bootstrap-admin`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${publicAnonKey}`,
+                  },
+                  body: JSON.stringify({
+                    email: 'admin@pipnationacademy.com',
+                    password: 'Admin123!',
+                    firstName: 'Admin',
+                    country: 'US'
+                  }),
+                }
+              );
+              
+              const bootstrapData = await bootstrapResponse.json();
+              console.log("📥 Bootstrap response:", bootstrapData);
+              console.log("📥 Bootstrap status:", bootstrapResponse.status);
+              console.log("📥 Bootstrap ok:", bootstrapResponse.ok);
+              
+              if (bootstrapData.success || bootstrapResponse.ok) {
+                console.log("✅ Admin account created, attempting login...");
+                toast.success("Admin account created! Logging you in...");
+                
+                // Wait for Supabase to fully process the admin account
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                
+                // Now try to login again
+                const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
+                  email: 'admin@pipnationacademy.com',
+                  password: 'Admin123!',
+                });
+                
+                if (retryError) {
+                  console.error("❌ Retry login failed:", retryError);
+                  toast.error("Admin account created but login failed. Please try logging in again.");
+                  return;
+                }
+                
+                if (!retryData.session?.access_token || !retryData.user?.id) {
+                  toast.error("Sign in failed - no session created");
+                  return;
+                }
+                
+                console.log("✅ Admin sign in successful:", retryData.user.id);
+                
+                setAccessToken(retryData.session.access_token);
+                localStorage.setItem("accessToken", retryData.session.access_token);
+                localStorage.setItem("userId", retryData.user.id);
+                await fetchUserProfile(retryData.user.id, retryData.session.access_token);
+                setAuthModalOpen(false);
+                toast.success("Welcome, Admin! 👑");
+                return;
+              } else {
+                console.error("❌ Bootstrap failed:", bootstrapData);
+                toast.error("Failed to create admin account. Please check console for details.");
+                return;
+              }
+            } catch (bootstrapError) {
+              console.error("❌ Bootstrap error:", bootstrapError);
+              toast.error("Error creating admin account. Please check console for details.");
+              return;
+            }
+          }
+          
+          // Provide helpful error messages based on error type
+          if (error.message?.includes("Invalid login credentials") || error.code === "invalid_credentials") {
+            toast.error(
+              "Invalid email or password. Haven't signed up yet? Click 'Get Started' to create an account!",
+              { duration: 6000 }
+            );
+          } else if (error.message?.includes("Email not confirmed")) {
+            toast.error(
+              "Please confirm your email address before signing in.",
+            );
+          } else if (error.message?.includes("Too many requests")) {
+            toast.error(
+              "Too many login attempts. Please wait a few minutes and try again.",
+            );
+          } else {
+            toast.error(
+              error.message || "Sign in failed. Please check your credentials and try again.",
+            );
+          }
           return;
         }
 
@@ -456,6 +566,9 @@ export default function App() {
   const showAuthTester =
     typeof window !== "undefined" &&
     window.location.search.includes("test-auth");
+  const showAdminSetup =
+    typeof window !== "undefined" &&
+    window.location.search.includes("admin-setup");
 
   if (showDiagnostics) {
     return (
@@ -475,6 +588,10 @@ export default function App() {
 
   if (showAuthTester) {
     return <AuthTester />;
+  }
+
+  if (showAdminSetup) {
+    return <AdminBootstrap accessToken={accessToken} onLogout={handleLogout} />;
   }
 
   return (
@@ -618,6 +735,13 @@ export default function App() {
         />
       )}
 
+      {currentView === "admin-setup" && (
+        <AdminBootstrap
+          accessToken={accessToken}
+          onLogout={handleLogout}
+        />
+      )}
+
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
@@ -645,7 +769,8 @@ export default function App() {
         currentView !== "beginners" &&
         currentView !== "strategy" &&
         currentView !== "community" &&
-        currentView !== "admin" && (
+        currentView !== "admin" &&
+        currentView !== "admin-setup" && (
           <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
             <div className="text-center">
               <div className="text-6xl mb-4">🤔</div>
