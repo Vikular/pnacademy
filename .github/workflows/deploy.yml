@@ -32,10 +32,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build (set base for project pages)
+      - name: Build (custom domain base)
         run: npm run build
         env:
-          VITE_BASE: /pnacademy/
+          VITE_BASE: /
           CNAME_DOMAIN: pipnationacademy.com
 
       - name: Upload artifact
