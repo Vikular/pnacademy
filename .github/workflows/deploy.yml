@@ -1,5 +1,7 @@
 name: Deploy to GitHub Pages
 
+name: Deploy to GitHub Pages
+
 on:
   push:
     branches: [ main ]
@@ -34,6 +36,7 @@ jobs:
         run: npm run build
         env:
           VITE_BASE: /pnacademy/
+          CNAME_DOMAIN: pipnationacademy.com
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
