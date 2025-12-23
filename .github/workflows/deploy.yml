@@ -30,8 +30,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build (set base for project pages)
         run: npm run build
+        env:
+          VITE_BASE: /pnacademy/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

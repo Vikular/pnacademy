@@ -4,7 +4,8 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  base: process.env.NODE_ENV === 'production' ? '/pnacademy/' : '/',
+  // Use env-configurable base to support both custom domains and project pages
+  base: process.env.VITE_BASE ?? '/',
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     alias: {
