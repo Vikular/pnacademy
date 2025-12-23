@@ -4,7 +4,7 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/',  // ✅ COMMA ADDED HERE
+  base: process.env.NODE_ENV === 'production' ? '/pnacademy/' : '/',
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     alias: {
