@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { SocialLinks } from './SocialLinks';
-import logoImage from 'figma:asset/e2e2f1ae8441670fc3154c69225d8cc55dbcf229.png';
+import logoImage from '../assets/logo.jpg';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -99,11 +99,11 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0">
                 <img 
                   src={logoImage} 
                   alt="Pip Nation Academy Logo" 
-                  className="w-10 h-10 object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <span className="text-xl">Pip Nation Academy</span>
@@ -820,11 +820,11 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0">
                   <img 
                     src={logoImage} 
                     alt="Pip Nation Academy Logo" 
-                    className="w-10 h-10 object-contain brightness-0 invert"
+                    className="w-full h-full object-cover"
                   />
                 </div>
                 <span className="text-xl">Pip Nation Academy</span>

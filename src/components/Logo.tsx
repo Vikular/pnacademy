@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import logoImage from 'figma:asset/e2e2f1ae8441670fc3154c69225d8cc55dbcf229.png';
+import logoImage from '../assets/logo.jpg';
 
 interface LogoProps {
   variant?: 'default' | 'compact' | 'icon-only';
