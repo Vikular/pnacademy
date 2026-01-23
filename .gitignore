@@ -1,1 +1,5 @@
 node_modules
+build/
+pnacademy.code-workspace
+robots.txt
+sitemap.xml
