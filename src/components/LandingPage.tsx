@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { ArrowRight, TrendingUp, Users, Award, BookOpen, Target, CheckCircle, Star, Zap, Shield, BarChart3, Clock, PlayCircle, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from './ui/button';
@@ -34,7 +34,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
   const testimonials = [
     {
       name: "Michael Chen",
-      country: "Singapore 🇸🇬",
+      country: "Singapore ðŸ‡¸ðŸ‡¬",
       quote: "From complete beginner to passing my FTMO challenge in 6 months. The structured approach and mentorship were absolute game-changers for my trading career.",
       result: "Funded Trader - $100K Account",
       image: "https://images.unsplash.com/photo-1633158829875-e5316a358c6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaW5hbmNpYWwlMjBzdWNjZXNzJTIwZ3Jvd3RofGVufDF8fHx8MTc2MDM1NDc0OHww&ixlib=rb-4.1.0&q=80&w=400",
@@ -42,7 +42,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
     },
     {
       name: "Sarah Williams",
-      country: "United Kingdom 🇬🇧",
+      country: "United Kingdom ðŸ‡¬ðŸ‡§",
       quote: "The progression system kept me motivated throughout. Each level built perfectly on the last. Now I'm in the Signal Room learning from the absolute best traders.",
       result: "Pro Trader - Signal Room Member",
       image: "https://images.unsplash.com/photo-1633158829875-e5316a358c6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaW5hbmNpYWwlMjBzdWNjZXNzJTIwZ3Jvd3RofGVufDF8fHx8MTc2MDM1NDc0OHww&ixlib=rb-4.1.0&q=80&w=400",
@@ -50,7 +50,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
     },
     {
       name: "Ibrahim Adewale",
-      country: "Nigeria 🇳🇬",
+      country: "Nigeria ðŸ‡³ðŸ‡¬",
       quote: "Flexible payment options made it accessible. The community support is incredible. Finally found a trading education that delivers real, measurable results.",
       result: "Advanced Level Student",
       image: "https://images.unsplash.com/photo-1633158829875-e5316a358c6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaW5hbmNpYWwlMjBzdWNjZXNzJTIwZ3Jvd3RofGVufDF8fHx8MTc2MDM1NDc0OHww&ixlib=rb-4.1.0&q=80&w=400",
@@ -756,7 +756,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
           >
             <p className="text-gray-600 mb-4">
               <Shield className="w-5 h-5 inline mr-2" />
-              30-day money-back guarantee on all paid plans
+              
             </p>
           </motion.div>
         </div>
@@ -874,3 +874,4 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
     </div>
   );
 }
+
