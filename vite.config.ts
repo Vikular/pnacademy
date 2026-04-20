@@ -56,8 +56,8 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
-    // Output to docs so GitHub Pages can serve from main/docs
-    outDir: 'docs',
+    // Output to build so CI uploads fresh assets
+    outDir: 'build',
   },
   server: {
     port: 3000,
