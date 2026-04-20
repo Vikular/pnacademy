@@ -28,15 +28,15 @@ jobs:
         run: npm run build
 
       - name: Add custom domain CNAME
-        run: echo pipnationacademy.com > docs/CNAME
+        run: echo pipnationacademy.com > build/CNAME
 
       - name: Add SPA 404 fallback
         run: |
-          cp docs/index.html docs/404.html
+          cp build/index.html build/404.html
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+          publish_dir: ./build
           publish_branch: gh-pages
