@@ -4,7 +4,7 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  // Use env-configurable base to support both custom domains and project pages
+  // Use env-configurable base; default '/' for custom domain
   base: process.env.VITE_BASE ?? '/',
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
@@ -56,7 +56,8 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
-    outDir: 'build',
+    // Output to docs so GitHub Pages can serve from main/docs
+    outDir: 'docs',
   },
   server: {
     port: 3000,
