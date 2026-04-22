@@ -17,7 +17,6 @@ import { AdminBootstrap } from "./components/AdminBootstrap";
 import { Button } from "./components/ui/button";
 import {
   projectId,
-  publicAnonKey,
 } from "./utils/supabase/info";
 import { supabase } from "./utils/supabase/client";
 import { Toaster } from "./components/ui/sonner";
@@ -266,76 +265,55 @@ export default function App() {
           console.log("  Error code:", error.code);
           console.log("  Error message:", error.message);
           
-          // If admin credentials and account doesn't exist, auto-create it
+          // If admin credentials and account doesn't exist, auto-create with Supabase Auth
           if (isAdminCredentials && (error.message?.includes("Invalid login credentials") || error.code === "invalid_credentials")) {
             console.log("🔐 Admin credentials detected, auto-creating admin account...");
             toast.info("Setting up your admin account...", { duration: 3000 });
-            
+
             try {
-              // Create admin account via bootstrap endpoint
-              const bootstrapResponse = await fetch(
-                `${apiUrl}/bootstrap-admin`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${publicAnonKey}`,
+              const { data: adminSignUpData, error: adminSignUpError } =
+                await supabase.auth.signUp({
+                  email: "admin@pipnationacademy.com",
+                  password: "Admin123!",
+                  options: {
+                    data: {
+                      firstName: "Admin",
+                      country: "US",
+                      role: "admin",
+                      badge: "Administrator",
+                      enrolledCourses: ["beginners", "strategy"],
+                      coursesCompleted: [],
+                      completedLessons: [],
+                      quizScores: {},
+                      advancedUnlocked: true,
+                      paymentHistory: [],
+                    },
                   },
-                  body: JSON.stringify({
-                    email: 'admin@pipnationacademy.com',
-                    password: 'Admin123!',
-                    firstName: 'Admin',
-                    country: 'US'
-                  }),
-                }
-              );
-              
-              const bootstrapData = await bootstrapResponse.json();
-              console.log("📥 Bootstrap response:", bootstrapData);
-              console.log("📥 Bootstrap status:", bootstrapResponse.status);
-              console.log("📥 Bootstrap ok:", bootstrapResponse.ok);
-              
-              if (bootstrapData.success || bootstrapResponse.ok) {
-                console.log("✅ Admin account created, attempting login...");
-                toast.success("Admin account created! Logging you in...");
-                
-                // Wait for Supabase to fully process the admin account
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                
-                // Now try to login again
-                const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
-                  email: 'admin@pipnationacademy.com',
-                  password: 'Admin123!',
                 });
-                
-                if (retryError) {
-                  console.error("❌ Retry login failed:", retryError);
-                  toast.error("Admin account created but login failed. Please try logging in again.");
-                  return;
-                }
-                
-                if (!retryData.session?.access_token || !retryData.user?.id) {
-                  toast.error("Sign in failed - no session created");
-                  return;
-                }
-                
-                console.log("✅ Admin sign in successful:", retryData.user.id);
-                
-                setAccessToken(retryData.session.access_token);
-                localStorage.setItem("accessToken", retryData.session.access_token);
-                localStorage.setItem("userId", retryData.user.id);
-                await fetchUserProfile(retryData.user.id, retryData.session.access_token);
-                setAuthModalOpen(false);
-                toast.success("Welcome, Admin! 👑");
-                return;
-              } else {
-                console.error("❌ Bootstrap failed:", bootstrapData);
-                toast.error("Failed to create admin account. Please check console for details.");
+
+              if (adminSignUpError && adminSignUpError.code !== "user_already_exists") {
+                console.error("❌ Admin sign up failed:", adminSignUpError);
+                toast.error(adminSignUpError.message || "Failed to create admin account.");
                 return;
               }
-            } catch (bootstrapError) {
-              console.error("❌ Bootstrap error:", bootstrapError);
-              toast.error("Error creating admin account. Please check console for details.");
+
+              if (!adminSignUpData.session) {
+                toast.error("Admin account created. Confirm the admin email, then log in.");
+                return;
+              }
+
+              console.log("✅ Admin account created and signed in:", adminSignUpData.user?.id);
+
+              setAccessToken(adminSignUpData.session.access_token);
+              localStorage.setItem("accessToken", adminSignUpData.session.access_token);
+              localStorage.setItem("userId", adminSignUpData.user!.id);
+              await fetchUserProfile(adminSignUpData.user!.id, adminSignUpData.session.access_token);
+              setAuthModalOpen(false);
+              toast.success("Welcome, Admin!");
+              return;
+            } catch (adminCreateError) {
+              console.error("❌ Admin creation error:", adminCreateError);
+              toast.error("Error creating admin account. Please try again.");
               return;
             }
           }

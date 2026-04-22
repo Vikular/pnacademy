@@ -9,7 +9,6 @@ import { PaymentReceiptUpload } from './PaymentReceiptUpload';
 import { NavigationHeader } from './NavigationHeader';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { toast } from 'sonner@2.0.3';
-import { projectId } from '../utils/supabase/info';
 
 interface CourseEnrollmentProps {
   enrolledCourses: string[];
@@ -89,32 +88,24 @@ export function CourseEnrollment({ enrolledCourses, onEnroll, onBack, userName, 
     }
   ];
 
-  // Fetch pending payments on mount
+  // Load pending payments from local storage on mount
   useEffect(() => {
-    if (userId && accessToken) {
-      fetchPendingPayments();
-    }
+    fetchPendingPayments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, accessToken]);
 
-  const fetchPendingPayments = async () => {
-    if (!userId || !accessToken) return;
-    
+  const fetchPendingPayments = () => {
+    if (!userId) return;
     try {
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-0991178c/user/${userId}/pending-payments`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        // Extract course IDs from pending payments
-        const pending = data.pendingPayments?.map((p: any) => p.courseId) || [];
-        setPendingPayments(pending);
+      const storedPending = localStorage.getItem(`pendingPayments:${userId}`);
+      if (storedPending) {
+        const parsed = JSON.parse(storedPending);
+        if (Array.isArray(parsed)) {
+          setPendingPayments(parsed);
+        }
       }
     } catch (error) {
-      console.error('Error fetching pending payments:', error);
+      console.error('Error loading pending payments from local storage:', error);
     }
   };
 
@@ -151,7 +142,11 @@ export function CourseEnrollment({ enrolledCourses, onEnroll, onBack, userName, 
   const handlePaymentSuccess = (courseId: string, paymentMethod: string) => {
     // Payment submitted successfully - but it's pending admin approval
     // Add to pending payments list
-    setPendingPayments([...pendingPayments, courseId]);
+    const nextPending = [...pendingPayments, courseId];
+    setPendingPayments(nextPending);
+    if (userId) {
+      localStorage.setItem(`pendingPayments:${userId}`, JSON.stringify(nextPending));
+    }
     
     // Don't navigate away, just close the modal
     setPaymentModalOpen(false);
