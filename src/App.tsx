@@ -89,39 +89,49 @@ export default function App() {
     token: string,
   ) => {
     try {
-      console.log(
-        `🔄 Fetching user profile for userId: ${userId}`,
-      );
-      const response = await fetch(`${apiUrl}/user/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      console.log(`🔄 Fetching user profile for userId: ${userId}`);
+      const { data: { user }, error } = await supabase.auth.getUser(token);
+
+      if (error || !user) {
+        console.error("❌ Failed to fetch user:", error);
+        handleLogout();
+        return;
+      }
+
+      const meta = user.user_metadata || {};
+      const profile: UserProfile = {
+        userId: user.id,
+        email: user.email || "",
+        firstName: meta.firstName || user.email?.split("@")[0] || "User",
+        country: meta.country || "",
+        role: meta.role || "student",
+        badge: meta.badge || "Beginner",
+        progress: meta.progress || {
+          foundation: { completed: 0, total: 10 },
+          advanced: { completed: 0, total: 10 },
+          beginners: { completed: 0, total: 10 },
+          strategy: { completed: 0, total: 10 },
         },
+        completedLessons: meta.completedLessons || [],
+        quizScores: meta.quizScores || {},
+        advancedUnlocked: meta.advancedUnlocked || false,
+        enrolledCourses: meta.enrolledCourses || [],
+        coursesCompleted: meta.coursesCompleted || [],
+        paymentHistory: meta.paymentHistory || [],
+      };
+
+      console.log(`✅ Profile built successfully:`, {
+        userId: profile.userId,
+        email: profile.email,
+        role: profile.role,
       });
 
-      if (response.ok) {
-        const profile = await response.json();
-        console.log(`✅ Profile fetched successfully:`, {
-          userId: profile.userId,
-          email: profile.email,
-          role: profile.role,
-          enrolledCourses: profile.enrolledCourses,
-        });
-        setUserProfile(profile);
+      setUserProfile(profile);
 
-        // Route to appropriate view based on role
-        if (profile.role === "admin") {
-          setCurrentView("admin");
-        } else {
-          setCurrentView("dashboard");
-        }
+      if (profile.role === "admin") {
+        setCurrentView("admin");
       } else {
-        console.error(
-          `❌ Failed to fetch profile. Status: ${response.status}`,
-        );
-        const errorText = await response.text();
-        console.error(`❌ Error response:`, errorText);
-        // Token invalid, clear storage
-        handleLogout();
+        setCurrentView("dashboard");
       }
     } catch (error) {
       console.error("❌ Error fetching user profile:", error);
@@ -140,36 +150,40 @@ export default function App() {
         authModalMode === "signup" || authModalMode === "lead";
 
       if (isSignup) {
-        console.log("🔐 Starting signup via backend...");
+        console.log("🔐 Starting signup via Supabase Auth...");
 
-        // Use backend signup endpoint which handles user creation with auto-confirmed email
-        const signupResponse = await fetch(
-          `${apiUrl}/user/signup`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${publicAnonKey}`, // Required by Supabase Edge Functions
+        const { data: signUpData, error: signUpError } =
+          await supabase.auth.signUp({
+            email: email.trim().toLowerCase(),
+            password,
+            options: {
+              data: {
+                firstName: signupData?.fullName || email.split("@")[0],
+                country: signupData?.country || "",
+                role: "student",
+                badge: "Beginner",
+                tradingExperience: signupData?.tradingExperience || "",
+                tradingGoals: signupData?.tradingGoals || "",
+                currentKnowledge: signupData?.currentKnowledge || "",
+                phoneNumber: signupData?.phoneNumber || "",
+                whatsappNumber: signupData?.whatsappNumber || "",
+                tradingPreferences: signupData?.tradingPreferences || [],
+                enrolledCourses: [],
+                coursesCompleted: [],
+                completedLessons: [],
+                quizScores: {},
+                advancedUnlocked: false,
+                paymentHistory: [],
+              },
             },
-            body: JSON.stringify({
-              email,
-              password,
-              firstName:
-                signupData?.fullName || email.split("@")[0],
-              country: signupData?.country || "US",
-              signupData: signupData || {},
-            }),
-          },
-        );
+          });
 
-        if (!signupResponse.ok) {
-          const errorData = await signupResponse.json();
-          console.error("❌ Signup failed:", errorData);
-
-          // Check if user already exists
+        if (signUpError) {
+          console.error("❌ Signup failed:", signUpError);
           if (
-            errorData.error?.includes("already registered") ||
-            errorData.error?.includes("already exists")
+            signUpError.message?.includes("already registered") ||
+            signUpError.message?.includes("already exists") ||
+            signUpError.code === "user_already_exists"
           ) {
             toast.error(
               "This email is already registered. Please log in instead.",
@@ -185,64 +199,34 @@ export default function App() {
               },
             );
           } else {
-            toast.error(errorData.error || "Signup failed");
+            toast.error(signUpError.message || "Signup failed");
           }
           return;
         }
 
-        const signupResult = await signupResponse.json();
-        console.log("✅ Signup successful:", signupResult);
+        console.log("✅ Signup successful:", signUpData.user?.id);
+
+        // If email confirmation is required, Supabase will not return a session yet
+        if (!signUpData.session) {
+          toast.success(
+            "Account created! Please check your email to confirm your account, then log in.",
+            { duration: 8000 }
+          );
+          setAuthModalMode("login");
+          setAuthModalOpen(false);
+          return;
+        }
 
         toast.success("Account created successfully!");
 
-        // Wait a moment for Supabase to fully process the user creation
-        await new Promise((resolve) =>
-          setTimeout(resolve, 500),
-        );
+        console.log("✅ Auto sign-in successful (email confirmation disabled)");
 
-        // Now sign in to get the session
-        console.log(
-          "🔐 Signing in to get session with email:",
-          email,
-        );
-        const { data: signInData, error: signInError } =
-          await supabase.auth.signInWithPassword({
-            email: email.trim().toLowerCase(), // Ensure email is normalized
-            password,
-          });
-
-        if (signInError) {
-          console.error("❌ Auto sign-in failed:", signInError);
-          console.error(
-            "❌ Full error details:",
-            JSON.stringify(signInError, null, 2),
-          );
-          toast.error(
-            `Account created! Please try logging in manually. Error: ${signInError.message}`,
-          );
-          setAuthModalMode("login");
-          return;
-        }
-
-        if (!signInData.session?.access_token) {
-          toast.error(
-            "Account created! Please log in manually.",
-          );
-          setAuthModalMode("login");
-          return;
-        }
-
-        console.log("✅ Auto sign-in successful");
-
-        setAccessToken(signInData.session.access_token);
-        localStorage.setItem(
-          "accessToken",
-          signInData.session.access_token,
-        );
-        localStorage.setItem("userId", signInData.user.id);
+        setAccessToken(signUpData.session.access_token);
+        localStorage.setItem("accessToken", signUpData.session.access_token);
+        localStorage.setItem("userId", signUpData.user!.id);
         await fetchUserProfile(
-          signInData.user.id,
-          signInData.session.access_token,
+          signUpData.user!.id,
+          signUpData.session.access_token,
         );
         setAuthModalOpen(false);
         toast.success("Welcome to Pip Nation Academy!");
