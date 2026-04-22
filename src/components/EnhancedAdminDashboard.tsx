@@ -28,6 +28,7 @@ interface EnhancedAdminDashboardProps {
 }
 
 export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminDashboardProps) {
+  const legacyAdminApiEnabled = false;
   const [currentTab, setCurrentTab] = useState('overview');
   const [analytics, setAnalytics] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
@@ -51,7 +52,19 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
 
   const apiUrl = `https://${projectId}.supabase.co/functions/v1/make-server-0991178c`;
 
+  const showMigrationNotice = () => {
+    toast.info('Admin data actions are being migrated to the new Supabase project.');
+  };
+
   useEffect(() => {
+    if (!legacyAdminApiEnabled) {
+      setIsLoading(false);
+      setUsers([]);
+      setAnalytics(null);
+      setLiveActivity(null);
+      return;
+    }
+
     if (currentTab === 'overview') {
       loadOverviewData();
     } else if (currentTab === 'users') {
@@ -64,6 +77,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   }, [currentTab]);
 
   const loadOverviewData = async () => {
+    if (!legacyAdminApiEnabled) {
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
       await Promise.all([loadUsers(), loadAnalytics(), loadLiveActivity()]);
@@ -76,6 +94,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const loadUsers = async () => {
+    if (!legacyAdminApiEnabled) {
+      setUsers([]);
+      return;
+    }
+
     try {
       const response = await fetch(`${apiUrl}/admin/users`, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -90,6 +113,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const loadAnalytics = async () => {
+    if (!legacyAdminApiEnabled) {
+      setAnalytics(null);
+      return;
+    }
+
     try {
       const response = await fetch(`${apiUrl}/admin/analytics`, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -104,6 +132,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const loadLiveActivity = async () => {
+    if (!legacyAdminApiEnabled) {
+      setLiveActivity(null);
+      return;
+    }
+
     try {
       const response = await fetch(`${apiUrl}/admin/activity/live`, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -118,6 +151,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const viewUserDetails = async (userId: string) => {
+    if (!legacyAdminApiEnabled) {
+      showMigrationNotice();
+      return;
+    }
+
     try {
       const response = await fetch(`${apiUrl}/admin/user/${userId}/full`, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -134,6 +172,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const toggleUserStatus = async (userId: string, currentStatus: string) => {
+    if (!legacyAdminApiEnabled) {
+      showMigrationNotice();
+      return;
+    }
+
     const newStatus = currentStatus === 'suspended' ? 'active' : 'suspended';
     
     try {
@@ -162,6 +205,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const sendBroadcast = async () => {
+    if (!legacyAdminApiEnabled) {
+      showMigrationNotice();
+      return;
+    }
+
     try {
       const response = await fetch(`${apiUrl}/admin/broadcast`, {
         method: 'POST',
@@ -190,6 +238,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const manualPaymentVerification = async (userId: string, courseId: string, amount: number) => {
+    if (!legacyAdminApiEnabled) {
+      showMigrationNotice();
+      return;
+    }
+
     try {
       const response = await fetch(`${apiUrl}/admin/payment/verify`, {
         method: 'POST',
@@ -219,6 +272,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const upgradeUserLevel = async () => {
+    if (!legacyAdminApiEnabled) {
+      showMigrationNotice();
+      return;
+    }
+
     try {
       const response = await fetch(`${apiUrl}/admin/user/${upgradeUserId}/upgrade-level`, {
         method: 'POST',
@@ -248,6 +306,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const grantCourseAccess = async () => {
+    if (!legacyAdminApiEnabled) {
+      showMigrationNotice();
+      return;
+    }
+
     try {
       const response = await fetch(`${apiUrl}/admin/user/${grantCourseUserId}/grant-course`, {
         method: 'POST',
@@ -277,6 +340,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const revokeCourseAccess = async (userId: string, courseId: string) => {
+    if (!legacyAdminApiEnabled) {
+      showMigrationNotice();
+      return;
+    }
+
     if (!confirm(`Are you sure you want to revoke ${courseId} access for this user?`)) {
       return;
     }
@@ -310,6 +378,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const deleteUser = async (userId: string, userEmail: string) => {
+    if (!legacyAdminApiEnabled) {
+      showMigrationNotice();
+      return;
+    }
+
     const confirmMessage = `⚠️ WARNING: This will permanently delete the user "${userEmail}" and all associated data including:\n\n• User profile\n• Payment history\n• Sessions\n• Course progress\n• Payment receipts\n\nThis action CANNOT be undone.\n\nType "DELETE" to confirm:`;
     
     const confirmation = prompt(confirmMessage);
@@ -385,6 +458,24 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   if (currentTab === 'courses') {
+    if (!legacyAdminApiEnabled) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
+          <Card className="max-w-2xl mx-auto mt-12">
+            <CardHeader>
+              <CardTitle>Course Management Migration</CardTitle>
+              <CardDescription>
+                Course management is temporarily disabled while admin APIs are migrated to the new Supabase project.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={() => setCurrentTab('overview')}>Back to Overview</Button>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
     return <AdminCourseUpload accessToken={accessToken} onBack={() => setCurrentTab('overview')} />;
   }
 
@@ -437,23 +528,23 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
               <Users className="w-4 h-4" />
               Users
             </TabsTrigger>
-            <TabsTrigger value="payments" className="gap-2">
+            <TabsTrigger value="payments" className="gap-2" disabled={!legacyAdminApiEnabled}>
               <Clock className="w-4 h-4" />
               Payments
             </TabsTrigger>
-            <TabsTrigger value="activity" className="gap-2">
+            <TabsTrigger value="activity" className="gap-2" disabled={!legacyAdminApiEnabled}>
               <Activity className="w-4 h-4" />
               Live Activity
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="gap-2">
+            <TabsTrigger value="analytics" className="gap-2" disabled={!legacyAdminApiEnabled}>
               <TrendingUp className="w-4 h-4" />
               Analytics
             </TabsTrigger>
-            <TabsTrigger value="courses" className="gap-2">
+            <TabsTrigger value="courses" className="gap-2" disabled={!legacyAdminApiEnabled}>
               <Upload className="w-4 h-4" />
               Courses
             </TabsTrigger>
-            <TabsTrigger value="communications" className="gap-2">
+            <TabsTrigger value="communications" className="gap-2" disabled={!legacyAdminApiEnabled}>
               <MessageSquare className="w-4 h-4" />
               Broadcast
             </TabsTrigger>
@@ -533,7 +624,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <Dialog open={showBroadcastDialog} onOpenChange={setShowBroadcastDialog}>
                     <DialogTrigger asChild>
-                      <Button className="gap-2 h-auto py-4" variant="outline">
+                      <Button className="gap-2 h-auto py-4" variant="outline" disabled={!legacyAdminApiEnabled}>
                         <MessageSquare className="w-5 h-5" />
                         <div className="text-left">
                           <div className="text-sm">Send Broadcast</div>
@@ -586,7 +677,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
                   </Button>
 
                   <Button
-                    onClick={() => setCurrentTab('courses')}
+                    onClick={() => legacyAdminApiEnabled ? setCurrentTab('courses') : showMigrationNotice()}
                     className="gap-2 h-auto py-4"
                     variant="outline"
                   >
@@ -598,7 +689,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
                   </Button>
 
                   <Button
-                    onClick={() => setCurrentTab('users')}
+                    onClick={() => legacyAdminApiEnabled ? setCurrentTab('users') : showMigrationNotice()}
                     className="gap-2 h-auto py-4"
                     variant="outline"
                   >
@@ -826,7 +917,15 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
 
           {/* Pending Payments Tab */}
           <TabsContent value="payments">
-            <PendingPaymentsTab accessToken={accessToken} />
+            {legacyAdminApiEnabled ? (
+              <PendingPaymentsTab accessToken={accessToken} />
+            ) : (
+              <Card>
+                <CardContent className="p-6">
+                  <p className="text-sm text-gray-600">Pending payment review is temporarily disabled during admin API migration.</p>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           {/* Activity Tab */}
