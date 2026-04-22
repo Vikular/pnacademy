@@ -1,2 +1,2 @@
-export const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID ?? "mkblwhxlrdcoflliwnyr";
-export const publicAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYmx3aHhscmRjb2ZsbGl3bnlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzNzEyNDksImV4cCI6MjA3NTk0NzI0OX0.CaK3tqR_p_sUcnlPohGq1ppZJI1HgrwLbNvrEgyrTvY";
+export const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID ?? "uhchrunehrcbhbyzpvwg";
+export const publicAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "sb_publishable_NJbjKGhbq6V_9N4mLRVbQg_hmZCv8kR";
