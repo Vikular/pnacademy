@@ -28,7 +28,7 @@ interface EnhancedAdminDashboardProps {
 }
 
 export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminDashboardProps) {
-  const legacyAdminApiEnabled = false;
+  const legacyAdminApiEnabled = true;
   const [currentTab, setCurrentTab] = useState('overview');
   const [analytics, setAnalytics] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);

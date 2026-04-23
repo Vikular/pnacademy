@@ -36,7 +36,9 @@ const getSupabaseClient = () => {
 // Note: KV store operations use SUPABASE_SERVICE_ROLE_KEY automatically
 // This is defined in kv_store.tsx and is necessary for database writes
 
-// Verify user token and return user
+// Verify user token, auto-create KV profile from auth metadata if it doesn't exist,
+// and return the user. This ensures the KV profile always exists after any
+// authenticated request (covers admin created via supabase.auth.signUp directly).
 const verifyUser = async (accessToken: string) => {
   if (!accessToken) {
     throw new Error('No access token provided');
@@ -47,6 +49,35 @@ const verifyUser = async (accessToken: string) => {
   
   if (error || !user) {
     throw new Error('Invalid or expired token');
+  }
+
+  // Ensure KV profile exists — auto-create from auth metadata if missing
+  const existing = await kv.get(`user:${user.id}`);
+  if (!existing) {
+    const meta = user.user_metadata || {};
+    const profile = {
+      userId: user.id,
+      email: user.email || '',
+      firstName: meta.firstName || user.email?.split('@')[0] || 'User',
+      country: meta.country || '',
+      role: meta.role || 'student',
+      badge: meta.badge || 'Beginner',
+      createdAt: new Date().toISOString(),
+      progress: meta.progress || {
+        foundation: { completed: 0, total: 12 },
+        advanced: { completed: 0, total: 15 },
+        beginners: { completed: 0, total: 12 },
+        strategy: { completed: 0, total: 17 },
+      },
+      completedLessons: meta.completedLessons || [],
+      quizScores: meta.quizScores || {},
+      advancedUnlocked: meta.advancedUnlocked || false,
+      enrolledCourses: meta.enrolledCourses || [],
+      coursesCompleted: meta.coursesCompleted || [],
+      paymentHistory: meta.paymentHistory || [],
+    };
+    await kv.set(`user:${user.id}`, profile);
+    console.log(`✅ Auto-created KV profile for ${user.email} (role: ${profile.role})`);
   }
   
   return user;
