@@ -56,13 +56,8 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
-<<<<<<< HEAD
-    // Keep output aligned with deploy workflow and postbuild scripts.
+    // Keep output aligned with deploy workflow and CI upload path.
     outDir: 'build',
-=======
-    // Output to build so CI uploads fresh assets
-    outDir: 'build',
->>>>>>> 27c14d0375edf9dc21aa5e1b5a7334b9deede0b4
   },
   server: {
     port: 3000,
