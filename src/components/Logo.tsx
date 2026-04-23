@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+﻿import { motion } from 'framer-motion';
 import logoImage from '../assets/logo.jpg';
 
 interface LogoProps {
@@ -274,3 +274,4 @@ style.textContent = `
 if (typeof document !== 'undefined') {
   document.head.appendChild(style);
 }
+

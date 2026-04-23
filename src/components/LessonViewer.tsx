@@ -1,6 +1,6 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { X, CheckCircle, PlayCircle, FileText, Award, AlertCircle, ChevronRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Progress } from './ui/progress';
@@ -133,12 +133,12 @@ export function LessonViewer({ lesson, isOpen, onClose, onComplete }: LessonView
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 flex-wrap">
                   <Badge variant={isQuiz ? "default" : "outline"} className="flex-shrink-0">
-                    {isQuiz ? '📝 Quiz' : '🎓 Lesson'}
+                    {isQuiz ? 'ðŸ“ Quiz' : 'ðŸŽ“ Lesson'}
                   </Badge>
                   <h2 className="text-lg md:text-xl truncate">{lesson.title}</h2>
                 </div>
                 <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
-                  <span>⏱️ {lesson.duration}</span>
+                  <span>â±ï¸ {lesson.duration}</span>
                   {!isQuiz && (
                     <span className="hidden sm:inline">
                       Progress: {Math.round(progress)}%
@@ -267,7 +267,7 @@ export function LessonViewer({ lesson, isOpen, onClose, onComplete }: LessonView
                         } shadow-2xl`}
                       >
                         <div className="text-5xl text-white">
-                          {quizScore >= 80 ? '✓' : '✗'}
+                          {quizScore >= 80 ? 'âœ“' : 'âœ—'}
                         </div>
                       </motion.div>
                       
@@ -278,7 +278,7 @@ export function LessonViewer({ lesson, isOpen, onClose, onComplete }: LessonView
                           transition={{ delay: 0.3 }}
                           className="text-3xl mb-3"
                         >
-                          {quizScore >= 80 ? '🎉 Congratulations!' : '📚 Keep Learning'}
+                          {quizScore >= 80 ? 'ðŸŽ‰ Congratulations!' : 'ðŸ“š Keep Learning'}
                         </motion.h3>
                         <motion.div
                           initial={{ y: 20, opacity: 0 }}
@@ -311,7 +311,7 @@ export function LessonViewer({ lesson, isOpen, onClose, onComplete }: LessonView
                               className="mt-4 p-4 bg-white rounded-lg"
                             >
                               <p className="text-xl">
-                                🎊 You've unlocked the <strong>Advanced Course</strong>!
+                                ðŸŽŠ You've unlocked the <strong>Advanced Course</strong>!
                               </p>
                             </motion.div>
                           )}
@@ -511,3 +511,4 @@ export function LessonViewer({ lesson, isOpen, onClose, onComplete }: LessonView
     </AnimatePresence>
   );
 }
+

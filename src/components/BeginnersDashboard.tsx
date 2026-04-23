@@ -1,6 +1,6 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { BookOpen, Play, CheckCircle, Lock, Download, Clock, Award, TrendingUp } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Progress } from './ui/progress';
@@ -312,7 +312,7 @@ export function BeginnersDashboard({ userProgress, completedLessons, onLessonSel
                 <Card className="border-2 border-green-500 bg-gradient-to-br from-green-50 to-blue-50">
                   <CardContent className="p-4 md:p-6 text-center">
                     <Award className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 text-green-600" />
-                    <h3 className="text-base md:text-lg mb-2">🎉 Congratulations!</h3>
+                    <h3 className="text-base md:text-lg mb-2">ðŸŽ‰ Congratulations!</h3>
                     <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">
                       You've completed the Beginners Academy!
                     </p>
@@ -329,3 +329,4 @@ export function BeginnersDashboard({ userProgress, completedLessons, onLessonSel
     </div>
   );
 }
+

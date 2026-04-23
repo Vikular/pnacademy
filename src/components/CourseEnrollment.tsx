@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { BookOpen, TrendingUp, Check, Lock, ArrowRight, Clock, Users, Award, AlertCircle } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -113,8 +113,8 @@ export function CourseEnrollment({ enrolledCourses, onEnroll, onBack, userName, 
     const isEnrolled = enrolledCourses.includes(course.id);
     const isPending = pendingPayments.includes(course.id);
     
-    console.log(`🎯 Enroll button clicked for: ${course.name} (${course.id})`);
-    console.log(`📊 Enrollment status:`, {
+    console.log(`ðŸŽ¯ Enroll button clicked for: ${course.name} (${course.id})`);
+    console.log(`ðŸ“Š Enrollment status:`, {
       isEnrolled,
       isPending,
       enrolledCourses,
@@ -123,17 +123,17 @@ export function CourseEnrollment({ enrolledCourses, onEnroll, onBack, userName, 
     
     if (isEnrolled) {
       // If already enrolled, call onEnroll to navigate to course dashboard
-      console.log(`✅ User is enrolled! Navigating to course dashboard...`);
+      console.log(`âœ… User is enrolled! Navigating to course dashboard...`);
       onEnroll(course.id);
     } else if (isPending) {
       // If payment is pending, show info message
-      console.log(`⏳ Payment is pending for this course`);
+      console.log(`â³ Payment is pending for this course`);
       toast.info(`Your payment for ${course.name} is pending admin approval. You'll get access within 24 hours.`, {
         duration: 5000,
       });
     } else {
       // If not enrolled and no pending payment, open payment modal
-      console.log(`💳 Opening payment modal...`);
+      console.log(`ðŸ’³ Opening payment modal...`);
       setSelectedCourse(course);
       setPaymentModalOpen(true);
     }
@@ -247,7 +247,7 @@ export function CourseEnrollment({ enrolledCourses, onEnroll, onBack, userName, 
                       <div className="flex items-center gap-2 text-white/90 text-xs md:text-sm">
                         <Clock className="w-3 h-3 md:w-4 md:h-4" />
                         <span>{course.stats.duration}</span>
-                        <span>•</span>
+                        <span>â€¢</span>
                         <Users className="w-3 h-3 md:w-4 md:h-4" />
                         <span>{course.stats.students}</span>
                       </div>
@@ -439,7 +439,7 @@ export function CourseEnrollment({ enrolledCourses, onEnroll, onBack, userName, 
                 setShowReceiptUpload(false);
                 setSelectedCourse(null);
                 // Show pending status message
-                toast.info('⏳ Payment Pending Approval', {
+                toast.info('â³ Payment Pending Approval', {
                   description: 'Your payment is being reviewed. You will receive access within 24 hours once approved.',
                   duration: 7000,
                 });
@@ -455,3 +455,4 @@ export function CourseEnrollment({ enrolledCourses, onEnroll, onBack, userName, 
     </div>
   );
 }
+

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { BookOpen, TrendingUp, Award, Users, Clock, CheckCircle, Lock, Upload, LogOut, Target, Sparkles, BarChart3, Calendar, MessageSquare, Download, FileText, Video, Headphones, BookMarked, PieChart, LineChart, DollarSign, Globe, Zap, ArrowRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Progress } from './ui/progress';
@@ -44,60 +44,60 @@ export function StudentDashboard({ user, onLogout, onLessonClick, onSubmitFTMO, 
   }, []);
 
   const foundationLessons = [
-    { id: 'f1', title: 'Introduction to Forex Trading', duration: '45 min', level: 'foundation', description: 'Get started with forex basics', icon: '📚' },
-    { id: 'f2', title: 'Market Structure Basics', duration: '60 min', level: 'foundation', description: 'Understanding market movement', icon: '📊' },
-    { id: 'f3', title: 'Understanding Currency Pairs', duration: '40 min', level: 'foundation', description: 'Major, minor, and exotic pairs', icon: '💱' },
-    { id: 'f4', title: 'Support and Resistance', duration: '55 min', level: 'foundation', description: 'Key price levels', icon: '📈' },
-    { id: 'f5', title: 'Trend Analysis', duration: '50 min', level: 'foundation', description: 'Identify market trends', icon: '📉' },
-    { id: 'f6', title: 'Candlestick Patterns', duration: '65 min', level: 'foundation', description: 'Reading price action', icon: '🕯️' },
-    { id: 'f7', title: 'Risk Management Fundamentals', duration: '70 min', level: 'foundation', description: 'Protect your capital', icon: '🛡️' },
-    { id: 'f8', title: 'Trading Psychology Basics', duration: '45 min', level: 'foundation', description: 'Master your mindset', icon: '🧠' },
-    { id: 'f9', title: 'Entry and Exit Strategies', duration: '60 min', level: 'foundation', description: 'Timing your trades', icon: '🎯' },
-    { id: 'f10', title: 'Position Sizing', duration: '50 min', level: 'foundation', description: 'How much to risk', icon: '⚖️' },
-    { id: 'f11', title: 'Building Your Trading Plan', duration: '55 min', level: 'foundation', description: 'Create your strategy', icon: '📋' },
-    { id: 'f12', title: 'Foundation Review and Quiz', duration: '30 min', level: 'foundation', isQuiz: true, description: 'Test your knowledge', icon: '✅' },
+    { id: 'f1', title: 'Introduction to Forex Trading', duration: '45 min', level: 'foundation', description: 'Get started with forex basics', icon: 'ðŸ“š' },
+    { id: 'f2', title: 'Market Structure Basics', duration: '60 min', level: 'foundation', description: 'Understanding market movement', icon: 'ðŸ“Š' },
+    { id: 'f3', title: 'Understanding Currency Pairs', duration: '40 min', level: 'foundation', description: 'Major, minor, and exotic pairs', icon: 'ðŸ’±' },
+    { id: 'f4', title: 'Support and Resistance', duration: '55 min', level: 'foundation', description: 'Key price levels', icon: 'ðŸ“ˆ' },
+    { id: 'f5', title: 'Trend Analysis', duration: '50 min', level: 'foundation', description: 'Identify market trends', icon: 'ðŸ“‰' },
+    { id: 'f6', title: 'Candlestick Patterns', duration: '65 min', level: 'foundation', description: 'Reading price action', icon: 'ðŸ•¯ï¸' },
+    { id: 'f7', title: 'Risk Management Fundamentals', duration: '70 min', level: 'foundation', description: 'Protect your capital', icon: 'ðŸ›¡ï¸' },
+    { id: 'f8', title: 'Trading Psychology Basics', duration: '45 min', level: 'foundation', description: 'Master your mindset', icon: 'ðŸ§ ' },
+    { id: 'f9', title: 'Entry and Exit Strategies', duration: '60 min', level: 'foundation', description: 'Timing your trades', icon: 'ðŸŽ¯' },
+    { id: 'f10', title: 'Position Sizing', duration: '50 min', level: 'foundation', description: 'How much to risk', icon: 'âš–ï¸' },
+    { id: 'f11', title: 'Building Your Trading Plan', duration: '55 min', level: 'foundation', description: 'Create your strategy', icon: 'ðŸ“‹' },
+    { id: 'f12', title: 'Foundation Review and Quiz', duration: '30 min', level: 'foundation', isQuiz: true, description: 'Test your knowledge', icon: 'âœ…' },
   ];
 
   const advancedLessons = [
-    { id: 'a1', title: 'Advanced Market Structure', duration: '75 min', level: 'advanced', description: 'Deep dive into price action', icon: '🔍' },
-    { id: 'a2', title: 'Smart Money Concepts', duration: '80 min', level: 'advanced', description: 'Institutional trading', icon: '💼' },
-    { id: 'a3', title: 'Order Blocks and Fair Value Gaps', duration: '70 min', level: 'advanced', description: 'Advanced price patterns', icon: '🎪' },
-    { id: 'a4', title: 'Liquidity Trading', duration: '85 min', level: 'advanced', description: 'Where the money flows', icon: '💧' },
-    { id: 'a5', title: 'Multi-Timeframe Analysis', duration: '65 min', level: 'advanced', description: 'Top-down trading approach', icon: '⏰' },
-    { id: 'a6', title: 'Advanced Risk Management', duration: '75 min', level: 'advanced', description: 'Portfolio management', icon: '🎲' },
-    { id: 'a7', title: 'Trading Psychology Mastery', duration: '60 min', level: 'advanced', description: 'Mental game mastery', icon: '🧘' },
-    { id: 'a8', title: 'Backtesting Strategies', duration: '90 min', level: 'advanced', description: 'Test your edge', icon: '🔬' },
-    { id: 'a9', title: 'Live Trade Analysis', duration: '80 min', level: 'advanced', description: 'Real trade breakdowns', icon: '🎬' },
-    { id: 'a10', title: 'Session Trading Strategies', duration: '70 min', level: 'advanced', description: 'London, NY, Asia', icon: '🌍' },
-    { id: 'a11', title: 'News Trading Techniques', duration: '65 min', level: 'advanced', description: 'Trading the events', icon: '📰' },
-    { id: 'a12', title: 'Building Your Edge', duration: '75 min', level: 'advanced', description: 'Find your advantage', icon: '⚡' },
-    { id: 'a13', title: 'Preparing for FTMO', duration: '60 min', level: 'advanced', description: 'Challenge preparation', icon: '🏆' },
-    { id: 'a14', title: 'Advanced Strategies Review', duration: '55 min', level: 'advanced', description: 'Putting it all together', icon: '🎓' },
-    { id: 'a15', title: 'Advanced Final Exam', duration: '40 min', level: 'advanced', isQuiz: true, description: 'Final assessment', icon: '🎖️' },
+    { id: 'a1', title: 'Advanced Market Structure', duration: '75 min', level: 'advanced', description: 'Deep dive into price action', icon: 'ðŸ”' },
+    { id: 'a2', title: 'Smart Money Concepts', duration: '80 min', level: 'advanced', description: 'Institutional trading', icon: 'ðŸ’¼' },
+    { id: 'a3', title: 'Order Blocks and Fair Value Gaps', duration: '70 min', level: 'advanced', description: 'Advanced price patterns', icon: 'ðŸŽª' },
+    { id: 'a4', title: 'Liquidity Trading', duration: '85 min', level: 'advanced', description: 'Where the money flows', icon: 'ðŸ’§' },
+    { id: 'a5', title: 'Multi-Timeframe Analysis', duration: '65 min', level: 'advanced', description: 'Top-down trading approach', icon: 'â°' },
+    { id: 'a6', title: 'Advanced Risk Management', duration: '75 min', level: 'advanced', description: 'Portfolio management', icon: 'ðŸŽ²' },
+    { id: 'a7', title: 'Trading Psychology Mastery', duration: '60 min', level: 'advanced', description: 'Mental game mastery', icon: 'ðŸ§˜' },
+    { id: 'a8', title: 'Backtesting Strategies', duration: '90 min', level: 'advanced', description: 'Test your edge', icon: 'ðŸ”¬' },
+    { id: 'a9', title: 'Live Trade Analysis', duration: '80 min', level: 'advanced', description: 'Real trade breakdowns', icon: 'ðŸŽ¬' },
+    { id: 'a10', title: 'Session Trading Strategies', duration: '70 min', level: 'advanced', description: 'London, NY, Asia', icon: 'ðŸŒ' },
+    { id: 'a11', title: 'News Trading Techniques', duration: '65 min', level: 'advanced', description: 'Trading the events', icon: 'ðŸ“°' },
+    { id: 'a12', title: 'Building Your Edge', duration: '75 min', level: 'advanced', description: 'Find your advantage', icon: 'âš¡' },
+    { id: 'a13', title: 'Preparing for FTMO', duration: '60 min', level: 'advanced', description: 'Challenge preparation', icon: 'ðŸ†' },
+    { id: 'a14', title: 'Advanced Strategies Review', duration: '55 min', level: 'advanced', description: 'Putting it all together', icon: 'ðŸŽ“' },
+    { id: 'a15', title: 'Advanced Final Exam', duration: '40 min', level: 'advanced', isQuiz: true, description: 'Final assessment', icon: 'ðŸŽ–ï¸' },
   ];
 
   const resources = {
     ebooks: [
-      { title: 'The Complete Forex Trading Guide', size: '12.5 MB', pages: 245, icon: '📖' },
-      { title: 'Risk Management Mastery', size: '8.2 MB', pages: 156, icon: '🛡️' },
-      { title: 'Technical Analysis Bible', size: '15.7 MB', pages: 312, icon: '📊' },
-      { title: 'Trading Psychology Handbook', size: '6.8 MB', pages: 189, icon: '🧠' },
+      { title: 'The Complete Forex Trading Guide', size: '12.5 MB', pages: 245, icon: 'ðŸ“–' },
+      { title: 'Risk Management Mastery', size: '8.2 MB', pages: 156, icon: 'ðŸ›¡ï¸' },
+      { title: 'Technical Analysis Bible', size: '15.7 MB', pages: 312, icon: 'ðŸ“Š' },
+      { title: 'Trading Psychology Handbook', size: '6.8 MB', pages: 189, icon: 'ðŸ§ ' },
     ],
     tools: [
-      { title: 'Position Size Calculator', type: 'Excel Template', icon: '🧮' },
-      { title: 'Trading Journal Template', type: 'PDF & Excel', icon: '📔' },
-      { title: 'Risk/Reward Calculator', type: 'Web Tool', icon: '⚖️' },
-      { title: 'Economic Calendar', type: 'Live Feed', icon: '📅' },
+      { title: 'Position Size Calculator', type: 'Excel Template', icon: 'ðŸ§®' },
+      { title: 'Trading Journal Template', type: 'PDF & Excel', icon: 'ðŸ“”' },
+      { title: 'Risk/Reward Calculator', type: 'Web Tool', icon: 'âš–ï¸' },
+      { title: 'Economic Calendar', type: 'Live Feed', icon: 'ðŸ“…' },
     ],
     videos: [
-      { title: 'Live Trading Session - EUR/USD', duration: '2h 15m', views: '12.5K', icon: '🎥' },
-      { title: 'Market Analysis Masterclass', duration: '1h 45m', views: '8.3K', icon: '📺' },
-      { title: 'Strategy Deep Dive', duration: '3h 20m', views: '15.2K', icon: '🎬' },
+      { title: 'Live Trading Session - EUR/USD', duration: '2h 15m', views: '12.5K', icon: 'ðŸŽ¥' },
+      { title: 'Market Analysis Masterclass', duration: '1h 45m', views: '8.3K', icon: 'ðŸ“º' },
+      { title: 'Strategy Deep Dive', duration: '3h 20m', views: '15.2K', icon: 'ðŸŽ¬' },
     ],
     webinars: [
-      { title: 'Monthly Market Outlook', date: 'Every 1st Monday', time: '7:00 PM EST', icon: '📡' },
-      { title: 'Live Q&A with Pro Traders', date: 'Every Wednesday', time: '6:00 PM EST', icon: '💬' },
-      { title: 'Strategy Workshop', date: 'Every Friday', time: '8:00 PM EST', icon: '🎓' },
+      { title: 'Monthly Market Outlook', date: 'Every 1st Monday', time: '7:00 PM EST', icon: 'ðŸ“¡' },
+      { title: 'Live Q&A with Pro Traders', date: 'Every Wednesday', time: '6:00 PM EST', icon: 'ðŸ’¬' },
+      { title: 'Strategy Workshop', date: 'Every Friday', time: '8:00 PM EST', icon: 'ðŸŽ“' },
     ]
   };
 
@@ -139,10 +139,10 @@ export function StudentDashboard({ user, onLogout, onLessonClick, onSubmitFTMO, 
               <div className="text-right hidden md:block">
                 <div className="text-sm">{user.firstName}</div>
                 <Badge variant="secondary" className="text-xs">
-                  {user.role === 'lead' && '✨ Free Trial'}
-                  {user.role === 'student' && '📚 Student'}
-                  {user.role === 'pro-trader' && '🏆 Pro Trader'}
-                  {user.role === 'funded-trader' && '💰 Funded'}
+                  {user.role === 'lead' && 'âœ¨ Free Trial'}
+                  {user.role === 'student' && 'ðŸ“š Student'}
+                  {user.role === 'pro-trader' && 'ðŸ† Pro Trader'}
+                  {user.role === 'funded-trader' && 'ðŸ’° Funded'}
                 </Badge>
               </div>
               <Button variant="outline" size="sm" onClick={onLogout}>
@@ -184,17 +184,17 @@ export function StudentDashboard({ user, onLogout, onLessonClick, onSubmitFTMO, 
                   </div>
                   <div className="flex-1 text-center md:text-left">
                     <h3 className="text-lg md:text-xl mb-2">
-                      🎓 Unlock Full Access to Premium Courses
+                      ðŸŽ“ Unlock Full Access to Premium Courses
                     </h3>
                     <p className="text-sm md:text-base text-gray-700 mb-3">
                       You're currently on the <Badge variant="outline" className="mx-1">Free Trial</Badge>. 
                       Enroll in our paid courses to access:
                     </p>
                     <div className="flex flex-wrap gap-2 justify-center md:justify-start text-xs md:text-sm">
-                      <Badge className="bg-blue-100 text-blue-700 border-blue-300">✅ Full Course Content</Badge>
-                      <Badge className="bg-purple-100 text-purple-700 border-purple-300">✅ Premium Community</Badge>
-                      <Badge className="bg-green-100 text-green-700 border-green-300">✅ Live Mentorship</Badge>
-                      <Badge className="bg-pink-100 text-pink-700 border-pink-300">✅ Trading Signals</Badge>
+                      <Badge className="bg-blue-100 text-blue-700 border-blue-300">âœ… Full Course Content</Badge>
+                      <Badge className="bg-purple-100 text-purple-700 border-purple-300">âœ… Premium Community</Badge>
+                      <Badge className="bg-green-100 text-green-700 border-green-300">âœ… Live Mentorship</Badge>
+                      <Badge className="bg-pink-100 text-pink-700 border-pink-300">âœ… Trading Signals</Badge>
                     </div>
                   </div>
                   <div className="flex-shrink-0">
@@ -237,7 +237,7 @@ export function StudentDashboard({ user, onLogout, onLessonClick, onSubmitFTMO, 
                     variant="outline"
                     disabled={!user.enrolledCourses.includes('beginners')}
                   >
-                    📚 Beginners Academy
+                    ðŸ“š Beginners Academy
                     {!user.enrolledCourses.includes('beginners') && <Lock className="w-3 h-3 ml-1" />}
                   </Button>
                   <Button
@@ -246,7 +246,7 @@ export function StudentDashboard({ user, onLogout, onLessonClick, onSubmitFTMO, 
                     variant="outline"
                     disabled={!user.enrolledCourses.includes('strategy')}
                   >
-                    🎯 Strategy Course
+                    ðŸŽ¯ Strategy Course
                     {!user.enrolledCourses.includes('strategy') && <Lock className="w-3 h-3 ml-1" />}
                   </Button>
                   <Button
@@ -337,10 +337,10 @@ export function StudentDashboard({ user, onLogout, onLessonClick, onSubmitFTMO, 
               </CardHeader>
               <CardContent className="pb-3 md:pb-4">
                 <div className="text-lg md:text-2xl mb-1">
-                  {isLead && '🎓 Free'}
-                  {user.role === 'student' && !canAccessAdvanced && '📚 Basic'}
-                  {user.role === 'student' && canAccessAdvanced && '⚡ Advanced'}
-                  {canAccessSignalRoom && '🏆 Pro'}
+                  {isLead && 'ðŸŽ“ Free'}
+                  {user.role === 'student' && !canAccessAdvanced && 'ðŸ“š Basic'}
+                  {user.role === 'student' && canAccessAdvanced && 'âš¡ Advanced'}
+                  {canAccessSignalRoom && 'ðŸ† Pro'}
                 </div>
                 <div className="text-xs text-gray-600">Keep going!</div>
               </CardContent>
@@ -682,7 +682,7 @@ export function StudentDashboard({ user, onLogout, onLessonClick, onSubmitFTMO, 
                             <span className="text-2xl">{book.icon}</span>
                             <div className="flex-1 min-w-0">
                               <div className="text-sm truncate">{book.title}</div>
-                              <div className="text-xs text-gray-600">{book.pages} pages • {book.size}</div>
+                              <div className="text-xs text-gray-600">{book.pages} pages â€¢ {book.size}</div>
                             </div>
                           </div>
                           <Download className="w-4 h-4 text-blue-600 flex-shrink-0" />
@@ -762,7 +762,7 @@ export function StudentDashboard({ user, onLogout, onLessonClick, onSubmitFTMO, 
                             <span className="text-2xl">{video.icon}</span>
                             <div className="flex-1 min-w-0">
                               <div className="text-sm truncate">{video.title}</div>
-                              <div className="text-xs text-gray-600">{video.duration} • {video.views} views</div>
+                              <div className="text-xs text-gray-600">{video.duration} â€¢ {video.views} views</div>
                             </div>
                           </div>
                           <Video className="w-4 h-4 text-purple-600 flex-shrink-0" />
@@ -802,7 +802,7 @@ export function StudentDashboard({ user, onLogout, onLessonClick, onSubmitFTMO, 
                             <span className="text-2xl">{webinar.icon}</span>
                             <div className="flex-1 min-w-0">
                               <div className="text-sm truncate">{webinar.title}</div>
-                              <div className="text-xs text-gray-600">{webinar.date} • {webinar.time}</div>
+                              <div className="text-xs text-gray-600">{webinar.date} â€¢ {webinar.time}</div>
                             </div>
                           </div>
                           <Badge className="bg-orange-500 text-white border-0 text-xs flex-shrink-0">Live</Badge>
@@ -868,9 +868,9 @@ export function StudentDashboard({ user, onLogout, onLessonClick, onSubmitFTMO, 
                         <CardContent>
                           <div className="space-y-3">
                             {[
-                              { pair: 'EUR/USD', direction: 'Long', profit: '+2.5%', entry: '1.0850', target: '1.0920', sl: '1.0800', icon: '💶' },
-                              { pair: 'GBP/JPY', direction: 'Short', profit: '+3.1%', entry: '193.50', target: '191.80', sl: '194.20', icon: '💷' },
-                              { pair: 'XAU/USD', direction: 'Long', profit: '+1.8%', entry: '2020', target: '2045', sl: '2010', icon: '🏅' }
+                              { pair: 'EUR/USD', direction: 'Long', profit: '+2.5%', entry: '1.0850', target: '1.0920', sl: '1.0800', icon: 'ðŸ’¶' },
+                              { pair: 'GBP/JPY', direction: 'Short', profit: '+3.1%', entry: '193.50', target: '191.80', sl: '194.20', icon: 'ðŸ’·' },
+                              { pair: 'XAU/USD', direction: 'Long', profit: '+1.8%', entry: '2020', target: '2045', sl: '2010', icon: 'ðŸ…' }
                             ].map((signal, idx) => (
                               <motion.div
                                 key={idx}
@@ -909,3 +909,4 @@ export function StudentDashboard({ user, onLogout, onLessonClick, onSubmitFTMO, 
     </div>
   );
 }
+

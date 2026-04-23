@@ -1,6 +1,6 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { X, CreditCard, Building, Coins, Check, Loader2, Shield, Lock, Upload, Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
@@ -45,7 +45,7 @@ export function PaymentModal({ isOpen, onClose, course, userId, accessToken, onP
       // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      toast.success('✅ Payment Method Selected!', {
+      toast.success('âœ… Payment Method Selected!', {
         description: `Please upload your payment receipt to complete enrollment.`,
         duration: 4000,
       });
@@ -280,7 +280,7 @@ export function PaymentModal({ isOpen, onClose, course, userId, accessToken, onP
                       <Separator />
                       <div className="bg-yellow-50 border border-yellow-200 rounded p-2 mt-3">
                         <p className="text-xs text-yellow-800">
-                          ⏱️ <strong>Approval Time:</strong> Within 24 hours after you submit payment
+                          â±ï¸ <strong>Approval Time:</strong> Within 24 hours after you submit payment
                         </p>
                       </div>
                       <p className="text-xs text-gray-600 mt-2">
@@ -375,3 +375,4 @@ export function PaymentModal({ isOpen, onClose, course, userId, accessToken, onP
     </AnimatePresence>
   );
 }
+

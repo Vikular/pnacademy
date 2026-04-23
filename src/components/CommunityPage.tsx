@@ -1,6 +1,6 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { MessageCircle, Send, Lock, Check, Users, TrendingUp, Award, BookOpen, ExternalLink } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -295,7 +295,7 @@ export function CommunityPage({ userRole, enrolledCourses, coursesCompleted, onB
           <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50">
             <CardContent className="p-4 md:p-6">
               <h3 className="text-lg md:text-xl mb-3 md:mb-4">
-                🤔 How to Join Groups
+                ðŸ¤” How to Join Groups
               </h3>
               <div className="space-y-2 md:space-y-3 text-xs md:text-sm text-gray-700">
                 <div className="flex items-start gap-2">
@@ -332,3 +332,4 @@ export function CommunityPage({ userRole, enrolledCourses, coursesCompleted, onB
     </div>
   );
 }
+

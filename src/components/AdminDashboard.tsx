@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Users, CheckCircle, XCircle, Shield, TrendingUp, LogOut, Award, BarChart3, Clock, Target, Sparkles, Eye, Upload, Database } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -89,7 +89,7 @@ export function AdminDashboard({ accessToken, onLogout }: AdminDashboardProps) {
       );
       
       if (response.ok) {
-        alert(approved ? '✅ User promoted to Pro Trader!' : '❌ Submission rejected');
+        alert(approved ? 'âœ… User promoted to Pro Trader!' : 'âŒ Submission rejected');
         fetchPendingSubmissions();
         fetchUsers();
       }
@@ -113,7 +113,7 @@ export function AdminDashboard({ accessToken, onLogout }: AdminDashboardProps) {
       );
       
       if (response.ok) {
-        alert('✅ User role updated successfully');
+        alert('âœ… User role updated successfully');
         fetchUsers();
       }
     } catch (error) {
@@ -134,12 +134,12 @@ export function AdminDashboard({ accessToken, onLogout }: AdminDashboardProps) {
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case 'lead': return '🆓';
-      case 'student': return '📚';
-      case 'pro-trader': return '🏆';
-      case 'funded-trader': return '💰';
-      case 'admin': return '👑';
-      default: return '👤';
+      case 'lead': return 'ðŸ†“';
+      case 'student': return 'ðŸ“š';
+      case 'pro-trader': return 'ðŸ†';
+      case 'funded-trader': return 'ðŸ’°';
+      case 'admin': return 'ðŸ‘‘';
+      default: return 'ðŸ‘¤';
     }
   };
 
@@ -479,10 +479,10 @@ export function AdminDashboard({ accessToken, onLogout }: AdminDashboardProps) {
                                 </div>
                                 <div className="text-sm text-gray-600 truncate">{user.email}</div>
                                 <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
-                                  <span>📅 {new Date(user.createdAt).toLocaleDateString()}</span>
-                                  <span className="hidden sm:inline">📚 Foundation: {user.progress?.foundation?.completed}/{user.progress?.foundation?.total}</span>
+                                  <span>ðŸ“… {new Date(user.createdAt).toLocaleDateString()}</span>
+                                  <span className="hidden sm:inline">ðŸ“š Foundation: {user.progress?.foundation?.completed}/{user.progress?.foundation?.total}</span>
                                   {user.advancedUnlocked && (
-                                    <span className="hidden md:inline">⚡ Advanced: {user.progress?.advanced?.completed}/{user.progress?.advanced?.total}</span>
+                                    <span className="hidden md:inline">âš¡ Advanced: {user.progress?.advanced?.completed}/{user.progress?.advanced?.total}</span>
                                   )}
                                 </div>
                               </div>
@@ -497,11 +497,11 @@ export function AdminDashboard({ accessToken, onLogout }: AdminDashboardProps) {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="lead">🆓 Lead</SelectItem>
-                                  <SelectItem value="student">📚 Student</SelectItem>
-                                  <SelectItem value="pro-trader">🏆 Pro Trader</SelectItem>
-                                  <SelectItem value="funded-trader">💰 Funded</SelectItem>
-                                  <SelectItem value="admin">👑 Admin</SelectItem>
+                                  <SelectItem value="lead">ðŸ†“ Lead</SelectItem>
+                                  <SelectItem value="student">ðŸ“š Student</SelectItem>
+                                  <SelectItem value="pro-trader">ðŸ† Pro Trader</SelectItem>
+                                  <SelectItem value="funded-trader">ðŸ’° Funded</SelectItem>
+                                  <SelectItem value="admin">ðŸ‘‘ Admin</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -519,3 +519,4 @@ export function AdminDashboard({ accessToken, onLogout }: AdminDashboardProps) {
     </div>
   );
 }
+

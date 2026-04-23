@@ -1,5 +1,5 @@
-import { Smartphone, Tablet, Monitor, Check } from 'lucide-react';
-import { motion } from 'motion/react';
+﻿import { Smartphone, Tablet, Monitor, Check } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
 export function MobileTestBadge() {
@@ -75,3 +75,4 @@ export function MobileTestBadge() {
     </motion.div>
   );
 }
+

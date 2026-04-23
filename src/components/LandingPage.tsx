@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { ArrowRight, TrendingUp, Users, Award, BookOpen, Target, CheckCircle, Star, Zap, Shield, BarChart3, Clock, PlayCircle, Sparkles } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -870,4 +870,5 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
     </div>
   );
 }
+
 

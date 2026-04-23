@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, AlertCircle, RefreshCw, Copy, Check } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Badge } from './ui/badge';
@@ -87,13 +87,13 @@ export function SystemHealthCheck() {
       const data = await response.json();
       
       if (response.ok) {
-        alert(`✅ SUCCESS! Signup works!\n\nUser created: ${data.userId}\nEmail: ${testEmail}\nPassword: ${testPassword}\n\nYou can now login with these credentials.`);
+        alert(`âœ… SUCCESS! Signup works!\n\nUser created: ${data.userId}\nEmail: ${testEmail}\nPassword: ${testPassword}\n\nYou can now login with these credentials.`);
       } else {
-        alert(`❌ Signup Failed\n\nError: ${data.error}\n\nCheck console for details.`);
+        alert(`âŒ Signup Failed\n\nError: ${data.error}\n\nCheck console for details.`);
         console.error('Signup error:', data);
       }
     } catch (error: any) {
-      alert(`❌ Network Error\n\n${error.message}\n\nServer might not be deployed.`);
+      alert(`âŒ Network Error\n\n${error.message}\n\nServer might not be deployed.`);
       console.error('Signup network error:', error);
     }
   };
@@ -113,8 +113,8 @@ export function SystemHealthCheck() {
 
   const getStatusBadge = (status: boolean | null) => {
     if (status === null) return <Badge variant="outline">Checking...</Badge>;
-    if (status) return <Badge className="bg-green-500 text-white border-0">Working ✓</Badge>;
-    return <Badge className="bg-red-500 text-white border-0">Failed ✗</Badge>;
+    if (status) return <Badge className="bg-green-500 text-white border-0">Working âœ“</Badge>;
+    return <Badge className="bg-red-500 text-white border-0">Failed âœ—</Badge>;
   };
 
   const allGood = healthStatus.serverReachable && healthStatus.authAvailable;
@@ -229,16 +229,16 @@ export function SystemHealthCheck() {
                 <div className="flex items-start gap-2 mb-3">
                   <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
-                    <div className="text-sm text-green-900 mb-1">✅ Everything is Working!</div>
+                    <div className="text-sm text-green-900 mb-1">âœ… Everything is Working!</div>
                     <div className="text-xs text-green-800">
                       Your authentication system is fully operational. You can:
                     </div>
                   </div>
                 </div>
                 <ul className="text-xs text-green-800 space-y-1 ml-7">
-                  <li>• Create new accounts</li>
-                  <li>• Login with existing credentials</li>
-                  <li>• Access the full platform</li>
+                  <li>â€¢ Create new accounts</li>
+                  <li>â€¢ Login with existing credentials</li>
+                  <li>â€¢ Access the full platform</li>
                 </ul>
               </div>
 
@@ -246,7 +246,7 @@ export function SystemHealthCheck() {
                 onClick={testSignup} 
                 className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700"
               >
-                🧪 Test Signup (Create Test Account)
+                ðŸ§ª Test Signup (Create Test Account)
               </Button>
             </>
           ) : (
@@ -255,7 +255,7 @@ export function SystemHealthCheck() {
                 <div className="flex items-start gap-2 mb-3">
                   <AlertCircle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
-                    <div className="text-sm text-orange-900 mb-1">⚠️ Action Required</div>
+                    <div className="text-sm text-orange-900 mb-1">âš ï¸ Action Required</div>
                     <div className="text-xs text-orange-800">
                       Server is not reachable. You need to deploy the Edge Function:
                     </div>
@@ -289,7 +289,7 @@ export function SystemHealthCheck() {
 
               <div className="p-3 bg-blue-50 border-2 border-blue-200 rounded-lg">
                 <div className="text-xs text-blue-900">
-                  📚 <strong>Need help?</strong> Check <code className="bg-blue-100 px-1 rounded">QUICK_FIX_GUIDE.md</code> for detailed instructions
+                  ðŸ“š <strong>Need help?</strong> Check <code className="bg-blue-100 px-1 rounded">QUICK_FIX_GUIDE.md</code> for detailed instructions
                 </div>
               </div>
             </>
@@ -319,7 +319,7 @@ export function SystemHealthCheck() {
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
               >
-                Supabase Dashboard →
+                Supabase Dashboard â†’
               </a>
             </div>
           </div>
@@ -328,3 +328,4 @@ export function SystemHealthCheck() {
     </Card>
   );
 }
+

@@ -134,6 +134,24 @@ const verifyAdmin = async (accessToken: string) => {
   return { user, profile };
 };
 
+const requireAdminFromRequest = async (c: any) => {
+  const accessToken = c.req.header('Authorization')?.split(' ')[1];
+
+  if (!accessToken) {
+    return { error: c.json({ error: 'No authorization token' }, 401) };
+  }
+
+  try {
+    const admin = await verifyAdmin(accessToken);
+    return { admin };
+  } catch (error) {
+    if (error instanceof Error && error.message === 'Admin access required') {
+      return { error: c.json({ error: 'Admin access required' }, 403) };
+    }
+    throw error;
+  }
+};
+
 // ==================== PUBLIC ENDPOINTS ====================
 
 // Health check endpoint
@@ -612,18 +630,8 @@ app.post("/make-server-0991178c/ftmo/submit", async (c) => {
 // Get all users (admin only)
 app.get("/make-server-0991178c/admin/users", async (c) => {
   try {
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const profile = await kv.get(`user:${user.id}`);
-    
-    if (!profile || profile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
 
     const users = await kv.getByPrefix('user:');
     
@@ -637,18 +645,8 @@ app.get("/make-server-0991178c/admin/users", async (c) => {
 // Get comprehensive students data (admin only)
 app.get("/make-server-0991178c/admin/students/data", async (c) => {
   try {
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const profile = await kv.get(`user:${user.id}`);
-    
-    if (!profile || profile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
 
     const users = await kv.getByPrefix('user:');
     
@@ -675,18 +673,8 @@ app.get("/make-server-0991178c/admin/students/data", async (c) => {
 // Get pending FTMO submissions (admin only)
 app.get("/make-server-0991178c/admin/ftmo/pending", async (c) => {
   try {
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const profile = await kv.get(`user:${user.id}`);
-    
-    if (!profile || profile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
 
     const submissions = await kv.getByPrefix('ftmo:');
     const pendingSubmissions = submissions.filter(s => s.status === 'pending');
@@ -702,18 +690,9 @@ app.get("/make-server-0991178c/admin/ftmo/pending", async (c) => {
 app.post("/make-server-0991178c/admin/ftmo/verify", async (c) => {
   try {
     const { submissionId, approved } = await c.req.json();
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     const submission = await kv.get(submissionId);
     if (!submission) {
@@ -750,18 +729,9 @@ app.post("/make-server-0991178c/admin/ftmo/verify", async (c) => {
 app.post("/make-server-0991178c/admin/course/upload", async (c) => {
   try {
     const { courseId, lessonId, materialType, title, description, url, order } = await c.req.json();
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const profile = await kv.get(`user:${user.id}`);
-    
-    if (!profile || profile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     const materialId = `material:${courseId}:${lessonId}:${Date.now()}`;
     const material = {
@@ -995,18 +965,8 @@ app.post("/make-server-0991178c/upgrade-to-admin", async (c) => {
 // Get live user activity (admin only)
 app.get("/make-server-0991178c/admin/activity/live", async (c) => {
   try {
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const profile = await kv.get(`user:${user.id}`);
-    
-    if (!profile || profile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
 
     // Get all user sessions from last 24 hours
     const sessions = await kv.getByPrefix('session:');
@@ -1032,19 +992,9 @@ app.get("/make-server-0991178c/admin/activity/live", async (c) => {
 // Get user full profile details (admin only)
 app.get("/make-server-0991178c/admin/user/:userId/full", async (c) => {
   try {
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
     const targetUserId = c.req.param('userId');
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
 
     const targetProfile = await kv.get(`user:${targetUserId}`);
     
@@ -1076,18 +1026,9 @@ app.get("/make-server-0991178c/admin/user/:userId/full", async (c) => {
 app.post("/make-server-0991178c/admin/users/bulk-update", async (c) => {
   try {
     const { userIds, updates } = await c.req.json();
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     const results = [];
     
@@ -1127,19 +1068,10 @@ app.post("/make-server-0991178c/admin/users/bulk-update", async (c) => {
 app.post("/make-server-0991178c/admin/user/:userId/status", async (c) => {
   try {
     const { status, reason } = await c.req.json(); // status: 'active' | 'suspended'
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
     const targetUserId = c.req.param('userId');
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     const targetProfile = await kv.get(`user:${targetUserId}`);
     
@@ -1169,19 +1101,10 @@ app.post("/make-server-0991178c/admin/user/:userId/status", async (c) => {
 // Delete user (admin only)
 app.delete("/make-server-0991178c/admin/user/:userId", async (c) => {
   try {
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
     const targetUserId = c.req.param('userId');
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     // Prevent admin from deleting themselves
     if (targetUserId === user.id) {
@@ -1249,18 +1172,8 @@ app.delete("/make-server-0991178c/admin/user/:userId", async (c) => {
 // Get analytics data (admin only)
 app.get("/make-server-0991178c/admin/analytics", async (c) => {
   try {
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
 
     const users = await kv.getByPrefix('user:');
     const sessions = await kv.getByPrefix('session:');
@@ -1313,18 +1226,9 @@ app.get("/make-server-0991178c/admin/analytics", async (c) => {
 app.post("/make-server-0991178c/admin/broadcast", async (c) => {
   try {
     const { message, targetRole, targetUsers } = await c.req.json();
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     const broadcast = {
       id: `broadcast:${Date.now()}`,
@@ -1353,18 +1257,9 @@ app.post("/make-server-0991178c/admin/broadcast", async (c) => {
 app.post("/make-server-0991178c/admin/payment/verify", async (c) => {
   try {
     const { userId, courseId, amount, notes } = await c.req.json();
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     const targetProfile = await kv.get(`user:${userId}`);
     
@@ -1417,19 +1312,10 @@ app.post("/make-server-0991178c/admin/payment/verify", async (c) => {
 app.post("/make-server-0991178c/admin/user/:userId/upgrade-level", async (c) => {
   try {
     const { level, badge } = await c.req.json();
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
     const targetUserId = c.req.param('userId');
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     const targetProfile = await kv.get(`user:${targetUserId}`);
     
@@ -1482,19 +1368,10 @@ app.post("/make-server-0991178c/admin/user/:userId/upgrade-level", async (c) => 
 app.post("/make-server-0991178c/admin/user/:userId/grant-course", async (c) => {
   try {
     const { courseId, reason } = await c.req.json();
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
     const targetUserId = c.req.param('userId');
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     const targetProfile = await kv.get(`user:${targetUserId}`);
     
@@ -1597,19 +1474,10 @@ app.post("/make-server-0991178c/admin/user/:userId/grant-course", async (c) => {
 app.post("/make-server-0991178c/admin/user/:userId/revoke-course", async (c) => {
   try {
     const { courseId, reason } = await c.req.json();
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
     const targetUserId = c.req.param('userId');
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     const targetProfile = await kv.get(`user:${targetUserId}`);
     
@@ -1858,18 +1726,8 @@ app.get("/make-server-0991178c/user/:userId/pending-payments", async (c) => {
 // Get all pending payments (admin only)
 app.get("/make-server-0991178c/admin/pending-payments", async (c) => {
   try {
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
 
     // Get all payment keys
     const paymentKeys = await kv.getByPrefix('payment:');
@@ -1903,18 +1761,8 @@ app.get("/make-server-0991178c/admin/pending-payments", async (c) => {
 app.get("/make-server-0991178c/admin/receipt/:paymentId", async (c) => {
   try {
     const paymentId = c.req.param('paymentId');
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
 
     const payment = await kv.get(paymentId);
     
@@ -1952,18 +1800,9 @@ app.get("/make-server-0991178c/admin/receipt/:paymentId", async (c) => {
 app.post("/make-server-0991178c/admin/payment/approve-receipt", async (c) => {
   try {
     const { paymentId } = await c.req.json();
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     const payment = await kv.get(paymentId);
     
@@ -2042,18 +1881,9 @@ app.post("/make-server-0991178c/admin/payment/approve-receipt", async (c) => {
 app.post("/make-server-0991178c/admin/payment/reject-receipt", async (c) => {
   try {
     const { paymentId, reason } = await c.req.json();
-    const accessToken = c.req.header('Authorization')?.split(' ')[1];
-    
-    if (!accessToken) {
-      return c.json({ error: "No authorization token" }, 401);
-    }
-
-    const user = await verifyUser(accessToken);
-    const adminProfile = await kv.get(`user:${user.id}`);
-    
-    if (!adminProfile || adminProfile.role !== 'admin') {
-      return c.json({ error: "Admin access required" }, 403);
-    }
+    const auth = await requireAdminFromRequest(c);
+    if (auth.error) return auth.error;
+    const { user } = auth.admin;
 
     const payment = await kv.get(paymentId);
     

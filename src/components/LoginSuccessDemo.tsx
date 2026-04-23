@@ -1,5 +1,5 @@
-import { CheckCircle, LogIn, UserPlus } from 'lucide-react';
-import { motion } from 'motion/react';
+﻿import { CheckCircle, LogIn, UserPlus } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export function LoginSuccessDemo() {
   return (
@@ -72,10 +72,10 @@ export function LoginSuccessDemo() {
               <div className="flex-1">
                 <div className="text-sm text-gray-700 mb-2">Role-Based:</div>
                 <div className="bg-white p-3 rounded-lg text-xs space-y-1">
-                  <div><span className="text-purple-600">student@test.com</span> → Full Access</div>
-                  <div><span className="text-purple-600">free@test.com</span> → Free Trial</div>
-                  <div><span className="text-purple-600">pro@test.com</span> → Pro Trader</div>
-                  <div><span className="text-purple-600">admin@test.com</span> → Admin Panel</div>
+                  <div><span className="text-purple-600">student@test.com</span> â†’ Full Access</div>
+                  <div><span className="text-purple-600">free@test.com</span> â†’ Free Trial</div>
+                  <div><span className="text-purple-600">pro@test.com</span> â†’ Pro Trader</div>
+                  <div><span className="text-purple-600">admin@test.com</span> â†’ Admin Panel</div>
                 </div>
               </div>
             </div>
@@ -93,10 +93,10 @@ export function LoginSuccessDemo() {
               <strong>What You'll See:</strong>
             </h4>
             <div className="text-xs text-gray-700 space-y-1">
-              <div>✅ Toast: "🎭 Demo Mode: Logged In!"</div>
-              <div>✅ Orange banner at top (demo mode)</div>
-              <div>✅ Dashboard loads immediately</div>
-              <div>✅ All features work perfectly</div>
+              <div>âœ… Toast: "ðŸŽ­ Demo Mode: Logged In!"</div>
+              <div>âœ… Orange banner at top (demo mode)</div>
+              <div>âœ… Dashboard loads immediately</div>
+              <div>âœ… All features work perfectly</div>
             </div>
           </motion.div>
 
@@ -143,3 +143,4 @@ export function LoginSuccessDemo() {
     </div>
   );
 }
+

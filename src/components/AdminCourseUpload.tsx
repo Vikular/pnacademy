@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Upload, Video, FileText, Trash2, ArrowLeft, Plus, Save } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -337,7 +337,7 @@ export function AdminCourseUpload({ accessToken, onBack }: AdminCourseUploadProp
                             {material.url}
                           </a>
                           <p className="text-xs text-gray-400 mt-2">
-                            Order: {material.order} • Uploaded:{' '}
+                            Order: {material.order} â€¢ Uploaded:{' '}
                             {new Date(material.uploadedAt).toLocaleDateString()}
                           </p>
                         </div>
@@ -361,3 +361,4 @@ export function AdminCourseUpload({ accessToken, onBack }: AdminCourseUploadProp
     </div>
   );
 }
+

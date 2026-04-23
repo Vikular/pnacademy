@@ -1,5 +1,5 @@
-import { MessageCircle, Send, Lock } from 'lucide-react';
-import { motion } from 'motion/react';
+﻿import { MessageCircle, Send, Lock } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -207,7 +207,7 @@ export function SocialLinks({ userRole, variant = 'full', className = '' }: Soci
           {userRole === 'lead' && (
             <div className="mt-4 p-3 bg-orange-50 border-2 border-orange-200 rounded-lg">
               <p className="text-xs text-orange-800">
-                <strong>🔒 Unlock More:</strong> Upgrade to a paid course to access exclusive
+                <strong>ðŸ”’ Unlock More:</strong> Upgrade to a paid course to access exclusive
                 community groups and premium content!
               </p>
             </div>
@@ -217,3 +217,4 @@ export function SocialLinks({ userRole, variant = 'full', className = '' }: Soci
     </div>
   );
 }
+

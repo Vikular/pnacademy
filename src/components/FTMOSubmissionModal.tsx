@@ -1,6 +1,6 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { X, Upload, CheckCircle, Award, Target, TrendingUp, Shield, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Input } from './ui/input';
@@ -222,7 +222,7 @@ export function FTMOSubmissionModal({ isOpen, onClose, onSubmit }: FTMOSubmissio
                         />
                       </div>
                       <p className="text-sm text-gray-600 flex items-start gap-2">
-                        <span className="text-blue-600">💡</span>
+                        <span className="text-blue-600">ðŸ’¡</span>
                         Upload your screenshot to Imgur, Google Drive, or Dropbox and paste the link here
                       </p>
                     </motion.div>
@@ -254,7 +254,7 @@ export function FTMOSubmissionModal({ isOpen, onClose, onSubmit }: FTMOSubmissio
                     >
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <span className="text-xl">⏳</span>
+                          <span className="text-xl">â³</span>
                         </div>
                         <div>
                           <p className="text-sm text-yellow-900 mb-1">
@@ -318,7 +318,7 @@ export function FTMOSubmissionModal({ isOpen, onClose, onSubmit }: FTMOSubmissio
                   transition={{ delay: 0.3 }}
                 >
                   <h3 className="text-3xl md:text-4xl mb-4 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                    🎉 Submission Received!
+                    ðŸŽ‰ Submission Received!
                   </h3>
                   <p className="text-lg text-gray-700 mb-6 max-w-md mx-auto">
                     Your FTMO proof has been submitted successfully. Our verification team will review it shortly.
@@ -326,9 +326,9 @@ export function FTMOSubmissionModal({ isOpen, onClose, onSubmit }: FTMOSubmissio
                   
                   <div className="max-w-lg mx-auto space-y-3 mb-8">
                     {[
-                      { icon: '✅', text: 'Submission recorded', color: 'from-green-50 to-green-100' },
-                      { icon: '👀', text: 'Under review (24-48 hours)', color: 'from-blue-50 to-blue-100' },
-                      { icon: '📧', text: 'Email notification on approval', color: 'from-purple-50 to-purple-100' }
+                      { icon: 'âœ…', text: 'Submission recorded', color: 'from-green-50 to-green-100' },
+                      { icon: 'ðŸ‘€', text: 'Under review (24-48 hours)', color: 'from-blue-50 to-blue-100' },
+                      { icon: 'ðŸ“§', text: 'Email notification on approval', color: 'from-purple-50 to-purple-100' }
                     ].map((step, idx) => (
                       <motion.div
                         key={idx}
@@ -351,7 +351,7 @@ export function FTMOSubmissionModal({ isOpen, onClose, onSubmit }: FTMOSubmissio
                   >
                     <Award className="w-16 h-16 mx-auto mb-3 text-green-600" />
                     <p className="text-sm text-gray-600">
-                      Get ready for your Pro Trader journey! 🚀
+                      Get ready for your Pro Trader journey! ðŸš€
                     </p>
                   </motion.div>
                 </motion.div>
@@ -363,3 +363,4 @@ export function FTMOSubmissionModal({ isOpen, onClose, onSubmit }: FTMOSubmissio
     </AnimatePresence>
   );
 }
+

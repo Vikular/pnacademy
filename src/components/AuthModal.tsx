@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { X, Mail, Lock, User, Globe, Sparkles, Shield, CheckCircle, Phone, TrendingUp, Target, BookOpen, Briefcase } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -243,7 +243,7 @@ export function AuthModal({ isOpen, onClose, mode, onAuth }: AuthModalProps) {
                         <Input
                           id="password"
                           type="password"
-                          placeholder="••••••••"
+                          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className="pl-10 h-11 border-2 focus:border-blue-600 transition-all"
@@ -312,7 +312,7 @@ export function AuthModal({ isOpen, onClose, mode, onAuth }: AuthModalProps) {
                         <Label htmlFor="password">Password *</Label>
                         {isLeadCapture && (
                           <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-                            ✓ Required
+                            âœ“ Required
                           </span>
                         )}
                       </div>
@@ -351,36 +351,36 @@ export function AuthModal({ isOpen, onClose, mode, onAuth }: AuthModalProps) {
                             <SelectValue placeholder="Select your country" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="US">🇺🇸 United States</SelectItem>
-                            <SelectItem value="UK">🇬🇧 United Kingdom</SelectItem>
-                            <SelectItem value="CA">🇨🇦 Canada</SelectItem>
-                            <SelectItem value="AU">🇦🇺 Australia</SelectItem>
-                            <SelectItem value="NG">🇳🇬 Nigeria</SelectItem>
-                            <SelectItem value="ZA">🇿🇦 South Africa</SelectItem>
-                            <SelectItem value="KE">🇰🇪 Kenya</SelectItem>
-                            <SelectItem value="GH">🇬🇭 Ghana</SelectItem>
-                            <SelectItem value="SG">🇸🇬 Singapore</SelectItem>
-                            <SelectItem value="IN">🇮🇳 India</SelectItem>
-                            <SelectItem value="MY">🇲🇾 Malaysia</SelectItem>
-                            <SelectItem value="PH">🇵🇭 Philippines</SelectItem>
-                            <SelectItem value="AE">🇦🇪 United Arab Emirates</SelectItem>
-                            <SelectItem value="SA">🇸🇦 Saudi Arabia</SelectItem>
-                            <SelectItem value="EG">🇪🇬 Egypt</SelectItem>
-                            <SelectItem value="BR">🇧🇷 Brazil</SelectItem>
-                            <SelectItem value="MX">🇲🇽 Mexico</SelectItem>
-                            <SelectItem value="AR">🇦🇷 Argentina</SelectItem>
-                            <SelectItem value="DE">🇩🇪 Germany</SelectItem>
-                            <SelectItem value="FR">🇫🇷 France</SelectItem>
-                            <SelectItem value="ES">🇪🇸 Spain</SelectItem>
-                            <SelectItem value="IT">🇮🇹 Italy</SelectItem>
-                            <SelectItem value="NL">🇳🇱 Netherlands</SelectItem>
-                            <SelectItem value="JP">🇯🇵 Japan</SelectItem>
-                            <SelectItem value="KR">🇰🇷 South Korea</SelectItem>
-                            <SelectItem value="CN">🇨🇳 China</SelectItem>
-                            <SelectItem value="TH">🇹🇭 Thailand</SelectItem>
-                            <SelectItem value="ID">🇮🇩 Indonesia</SelectItem>
-                            <SelectItem value="VN">🇻🇳 Vietnam</SelectItem>
-                            <SelectItem value="OTHER">🌍 Other</SelectItem>
+                            <SelectItem value="US">ðŸ‡ºðŸ‡¸ United States</SelectItem>
+                            <SelectItem value="UK">ðŸ‡¬ðŸ‡§ United Kingdom</SelectItem>
+                            <SelectItem value="CA">ðŸ‡¨ðŸ‡¦ Canada</SelectItem>
+                            <SelectItem value="AU">ðŸ‡¦ðŸ‡º Australia</SelectItem>
+                            <SelectItem value="NG">ðŸ‡³ðŸ‡¬ Nigeria</SelectItem>
+                            <SelectItem value="ZA">ðŸ‡¿ðŸ‡¦ South Africa</SelectItem>
+                            <SelectItem value="KE">ðŸ‡°ðŸ‡ª Kenya</SelectItem>
+                            <SelectItem value="GH">ðŸ‡¬ðŸ‡­ Ghana</SelectItem>
+                            <SelectItem value="SG">ðŸ‡¸ðŸ‡¬ Singapore</SelectItem>
+                            <SelectItem value="IN">ðŸ‡®ðŸ‡³ India</SelectItem>
+                            <SelectItem value="MY">ðŸ‡²ðŸ‡¾ Malaysia</SelectItem>
+                            <SelectItem value="PH">ðŸ‡µðŸ‡­ Philippines</SelectItem>
+                            <SelectItem value="AE">ðŸ‡¦ðŸ‡ª United Arab Emirates</SelectItem>
+                            <SelectItem value="SA">ðŸ‡¸ðŸ‡¦ Saudi Arabia</SelectItem>
+                            <SelectItem value="EG">ðŸ‡ªðŸ‡¬ Egypt</SelectItem>
+                            <SelectItem value="BR">ðŸ‡§ðŸ‡· Brazil</SelectItem>
+                            <SelectItem value="MX">ðŸ‡²ðŸ‡½ Mexico</SelectItem>
+                            <SelectItem value="AR">ðŸ‡¦ðŸ‡· Argentina</SelectItem>
+                            <SelectItem value="DE">ðŸ‡©ðŸ‡ª Germany</SelectItem>
+                            <SelectItem value="FR">ðŸ‡«ðŸ‡· France</SelectItem>
+                            <SelectItem value="ES">ðŸ‡ªðŸ‡¸ Spain</SelectItem>
+                            <SelectItem value="IT">ðŸ‡®ðŸ‡¹ Italy</SelectItem>
+                            <SelectItem value="NL">ðŸ‡³ðŸ‡± Netherlands</SelectItem>
+                            <SelectItem value="JP">ðŸ‡¯ðŸ‡µ Japan</SelectItem>
+                            <SelectItem value="KR">ðŸ‡°ðŸ‡· South Korea</SelectItem>
+                            <SelectItem value="CN">ðŸ‡¨ðŸ‡³ China</SelectItem>
+                            <SelectItem value="TH">ðŸ‡¹ðŸ‡­ Thailand</SelectItem>
+                            <SelectItem value="ID">ðŸ‡®ðŸ‡© Indonesia</SelectItem>
+                            <SelectItem value="VN">ðŸ‡»ðŸ‡³ Vietnam</SelectItem>
+                            <SelectItem value="OTHER">ðŸŒ Other</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -581,9 +581,9 @@ export function AuthModal({ isOpen, onClose, mode, onAuth }: AuthModalProps) {
                       />
                     ) : (
                       <>
-                        {isLeadCapture && '✨ Start Free Trial'}
-                        {isSignup && '🚀 Create Account'}
-                        {currentMode === 'login' && '🔐 Sign In'}
+                        {isLeadCapture && 'âœ¨ Start Free Trial'}
+                        {isSignup && 'ðŸš€ Create Account'}
+                        {currentMode === 'login' && 'ðŸ” Sign In'}
                       </>
                     )}
                   </Button>
@@ -649,3 +649,4 @@ export function AuthModal({ isOpen, onClose, mode, onAuth }: AuthModalProps) {
     </AnimatePresence>
   );
 }
+

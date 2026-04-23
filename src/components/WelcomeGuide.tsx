@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { X, CheckCircle, Zap, Users, BookOpen } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
@@ -57,7 +57,7 @@ export function WelcomeGuide() {
                   <X className="w-4 h-4" />
                 </Button>
                 <CardTitle className="text-xl md:text-2xl lg:text-3xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent pr-10">
-                  🎉 Welcome to Pip Nation Academy!
+                  ðŸŽ‰ Welcome to Pip Nation Academy!
                 </CardTitle>
                 <p className="text-gray-600 mt-2 text-sm md:text-base pr-10">
                   Your platform is ready to use with instant demo mode
@@ -72,7 +72,7 @@ export function WelcomeGuide() {
                       <Zap className="w-4 h-4 md:w-5 md:h-5 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-base md:text-lg mb-1">✅ Login Works Instantly!</h3>
+                      <h3 className="text-base md:text-lg mb-1">âœ… Login Works Instantly!</h3>
                       <p className="text-xs md:text-sm text-gray-700">
                         Click <strong>"Get Started"</strong> and use ANY email/password to login.
                         No backend needed!
@@ -89,15 +89,15 @@ export function WelcomeGuide() {
                       <Users className="w-4 h-4 md:w-5 md:h-5 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-base md:text-lg mb-1">🎭 Demo Mode Active</h3>
+                      <h3 className="text-base md:text-lg mb-1">ðŸŽ­ Demo Mode Active</h3>
                       <p className="text-xs md:text-sm text-gray-700 mb-2">
                         All features work perfectly. Your progress is saved in your browser.
                       </p>
                       <div className="flex flex-wrap gap-1.5 md:gap-2 text-xs">
-                        <span className="bg-white px-2 py-1 rounded">✅ Complete lessons</span>
-                        <span className="bg-white px-2 py-1 rounded">✅ Track progress</span>
-                        <span className="bg-white px-2 py-1 rounded">✅ Take quizzes</span>
-                        <span className="bg-white px-2 py-1 rounded hidden sm:inline">✅ Access resources</span>
+                        <span className="bg-white px-2 py-1 rounded">âœ… Complete lessons</span>
+                        <span className="bg-white px-2 py-1 rounded">âœ… Track progress</span>
+                        <span className="bg-white px-2 py-1 rounded">âœ… Take quizzes</span>
+                        <span className="bg-white px-2 py-1 rounded hidden sm:inline">âœ… Access resources</span>
                       </div>
                     </div>
                   </div>
@@ -107,15 +107,15 @@ export function WelcomeGuide() {
                       <BookOpen className="w-4 h-4 md:w-5 md:h-5 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-base md:text-lg mb-1">📚 Try Different Roles</h3>
+                      <h3 className="text-base md:text-lg mb-1">ðŸ“š Try Different Roles</h3>
                       <p className="text-xs md:text-sm text-gray-700 mb-2">
                         Use these emails to test different access levels:
                       </p>
                       <div className="space-y-1 text-xs overflow-x-auto">
-                        <div className="whitespace-nowrap"><strong>student@test.com</strong> → Full course access</div>
-                        <div className="whitespace-nowrap"><strong>free@test.com</strong> → Free trial (3 lessons)</div>
-                        <div className="whitespace-nowrap"><strong>pro@test.com</strong> → Pro trader + Signal Room</div>
-                        <div className="whitespace-nowrap"><strong>admin@test.com</strong> → Admin dashboard</div>
+                        <div className="whitespace-nowrap"><strong>student@test.com</strong> â†’ Full course access</div>
+                        <div className="whitespace-nowrap"><strong>free@test.com</strong> â†’ Free trial (3 lessons)</div>
+                        <div className="whitespace-nowrap"><strong>pro@test.com</strong> â†’ Pro trader + Signal Room</div>
+                        <div className="whitespace-nowrap"><strong>admin@test.com</strong> â†’ Admin dashboard</div>
                       </div>
                     </div>
                   </div>
@@ -143,7 +143,7 @@ export function WelcomeGuide() {
                   onClick={handleClose}
                   className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-base md:text-lg py-5 md:py-6"
                 >
-                  Got It! Let's Start Learning 🚀
+                  Got It! Let's Start Learning ðŸš€
                 </Button>
               </CardContent>
             </Card>
@@ -153,3 +153,4 @@ export function WelcomeGuide() {
     </AnimatePresence>
   );
 }
+

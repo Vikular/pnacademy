@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { 
-  Users, Activity, DollarSign, TrendingUp, Shield, Bell, 
-  Settings, BarChart3, MessageSquare, Lock, Unlock, Eye,
-  Download, Search, Filter, RefreshCw, Globe, Calendar,
-  ArrowUp, ArrowDown, CheckCircle, XCircle, AlertTriangle,
-  Upload, Database, LogOut, Crown, UserPlus, Award, BookOpen, Clock, Trash2
+  Users, Activity, DollarSign, TrendingUp,
+  BarChart3, MessageSquare, Lock, Unlock, Eye,
+  Download, Search, RefreshCw, Globe,
+  XCircle, Upload, Database, LogOut, Crown, Award, BookOpen, Clock, Trash2
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -17,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Avatar, AvatarFallback } from './ui/avatar';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { projectId } from '../utils/supabase/info';
 import { AdminCourseUpload } from './AdminCourseUpload';
 import { PendingPaymentsTab } from './PendingPaymentsTab';
@@ -39,7 +38,6 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   const [roleFilter, setRoleFilter] = useState('all');
   const [showUserDialog, setShowUserDialog] = useState(false);
   const [showBroadcastDialog, setShowBroadcastDialog] = useState(false);
-  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [showGrantCourseDialog, setShowGrantCourseDialog] = useState(false);
   const [broadcastMessage, setBroadcastMessage] = useState('');
@@ -252,40 +250,6 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
     }
   };
 
-  const manualPaymentVerification = async (userId: string, courseId: string, amount: number) => {
-    if (!legacyAdminApiEnabled) {
-      showMigrationNotice();
-      return;
-    }
-
-    try {
-      const response = await fetch(`${apiUrl}/admin/payment/verify`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          userId,
-          courseId,
-          amount,
-          notes: 'Manual verification by admin',
-        }),
-      });
-
-      if (response.ok) {
-        toast.success('Payment verified and user enrolled!');
-        setShowPaymentDialog(false);
-        loadUsers();
-      } else {
-        toast.error('Failed to verify payment');
-      }
-    } catch (error) {
-      console.error('Error verifying payment:', error);
-      toast.error('Error verifying payment');
-    }
-  };
-
   const upgradeUserLevel = async () => {
     if (!legacyAdminApiEnabled) {
       showMigrationNotice();
@@ -306,7 +270,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
       });
 
       if (response.ok) {
-        const data = await response.json();
+        await response.json();
         toast.success(`User upgraded to ${selectedLevel} with ${selectedBadge} badge!`);
         setShowUpgradeDialog(false);
         loadUsers();
@@ -398,7 +362,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
       return;
     }
 
-    const confirmMessage = `⚠️ WARNING: This will permanently delete the user "${userEmail}" and all associated data including:\n\n• User profile\n• Payment history\n• Sessions\n• Course progress\n• Payment receipts\n\nThis action CANNOT be undone.\n\nType "DELETE" to confirm:`;
+    const confirmMessage = `âš ï¸ WARNING: This will permanently delete the user "${userEmail}" and all associated data including:\n\nâ€¢ User profile\nâ€¢ Payment history\nâ€¢ Sessions\nâ€¢ Course progress\nâ€¢ Payment receipts\n\nThis action CANNOT be undone.\n\nType "DELETE" to confirm:`;
     
     const confirmation = prompt(confirmMessage);
     
@@ -456,7 +420,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
     toast.success('Data exported successfully!');
   };
 
-  // Build userId → "Name (email)" map for session display
+  // Build userId â†’ "Name (email)" map for session display
   const userLabelMap = Object.fromEntries(
     users.map(u => [u.userId, `${u.firstName || ''} (${u.email})`])
   );
@@ -819,6 +783,8 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
                         <TableHead className="w-12">
                           <input
                             type="checkbox"
+                            title="Select all users"
+                            aria-label="Select all users"
                             onChange={(e) => {
                               if (e.target.checked) {
                                 setBulkSelectedUsers(filteredUsers.map(u => u.userId));
@@ -854,6 +820,8 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
                           <TableCell>
                             <input
                               type="checkbox"
+                              title="Select user"
+                              aria-label={`Select ${user.firstName}`}
                               checked={bulkSelectedUsers.includes(user.userId)}
                               onChange={() => toggleBulkSelect(user.userId)}
                             />
@@ -1024,15 +992,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
                         {Object.entries(analytics?.usersByRole || {}).map(([role, count]: any) => (
                           <div key={role} className="flex items-center justify-between">
                             <span className="text-sm capitalize">{role}</span>
-                            <div className="flex items-center gap-2">
-                              <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                <div
-                                  className="h-full bg-blue-600"
-                                  style={{ width: `${(count / users.length) * 100}%` }}
-                                />
-                              </div>
-                              <span className="text-sm w-12 text-right">{count}</span>
-                            </div>
+                            <span className="text-sm w-12 text-right">{count}</span>
                           </div>
                         ))}
                       </div>
@@ -1048,15 +1008,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
                           .map(([country, count]: any) => (
                             <div key={country} className="flex items-center justify-between">
                               <span className="text-sm">{country}</span>
-                              <div className="flex items-center gap-2">
-                                <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                  <div
-                                    className="h-full bg-green-600"
-                                    style={{ width: `${(count / users.length) * 100}%` }}
-                                  />
-                                </div>
-                                <span className="text-sm w-12 text-right">{count}</span>
-                              </div>
+                              <span className="text-sm w-12 text-right">{count}</span>
                             </div>
                           ))}
                       </div>
@@ -1359,3 +1311,4 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
     </div>
   );
 }
+

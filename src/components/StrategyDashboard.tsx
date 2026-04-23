@@ -1,6 +1,6 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { TrendingUp, Play, CheckCircle, Lock, Download, Clock, Award, Target, BarChart } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Progress } from './ui/progress';
@@ -309,7 +309,7 @@ export function StrategyDashboard({ userProgress, completedLessons, onLessonSele
                     progressPercentage === 100 ? 'text-purple-600' : 'text-gray-400'
                   }`} />
                   <h3 className="text-base md:text-lg mb-2">
-                    {progressPercentage === 100 ? '🎉 Signal Room Unlocked!' : 'Signal Room'}
+                    {progressPercentage === 100 ? 'ðŸŽ‰ Signal Room Unlocked!' : 'Signal Room'}
                   </h3>
                   <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">
                     {progressPercentage === 100 
@@ -366,3 +366,4 @@ export function StrategyDashboard({ userProgress, completedLessons, onLessonSele
     </div>
   );
 }
+
