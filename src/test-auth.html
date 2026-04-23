@@ -172,7 +172,9 @@
     </div>
 
     <script>
-        const SERVER_URL = 'https://mkblwhxlrdcoflliwnyr.supabase.co/functions/v1/make-server-0991178c';
+        const SERVER_URL = window.location.origin.includes('localhost')
+            ? 'http://localhost:54321/functions/v1/make-server-0991178c'
+            : `${window.location.origin}/functions/v1/make-server-0991178c`;
         
         let testResults = {
             serverReachable: null,

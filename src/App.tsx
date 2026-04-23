@@ -98,25 +98,41 @@ export default function App() {
       }
 
       const meta = user.user_metadata || {};
+      let serverProfile: any = null;
+
+      try {
+        const profileResponse = await fetch(`${apiUrl}/user/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (profileResponse.ok) {
+          serverProfile = await profileResponse.json();
+        }
+      } catch (profileError) {
+        console.warn("⚠️ Could not load server profile, falling back to auth metadata", profileError);
+      }
+
       const profile: UserProfile = {
         userId: user.id,
         email: user.email || "",
-        firstName: meta.firstName || user.email?.split("@")[0] || "User",
-        country: meta.country || "",
-        role: meta.role || "student",
-        badge: meta.badge || "Beginner",
-        progress: meta.progress || {
+        firstName: serverProfile?.firstName || meta.firstName || user.email?.split("@")[0] || "User",
+        country: serverProfile?.country || meta.country || "",
+        role: serverProfile?.role || meta.role || "student",
+        badge: serverProfile?.badge || meta.badge || "Beginner",
+        progress: serverProfile?.progress || meta.progress || {
           foundation: { completed: 0, total: 10 },
           advanced: { completed: 0, total: 10 },
           beginners: { completed: 0, total: 10 },
           strategy: { completed: 0, total: 10 },
         },
-        completedLessons: meta.completedLessons || [],
-        quizScores: meta.quizScores || {},
-        advancedUnlocked: meta.advancedUnlocked || false,
-        enrolledCourses: meta.enrolledCourses || [],
-        coursesCompleted: meta.coursesCompleted || [],
-        paymentHistory: meta.paymentHistory || [],
+        completedLessons: serverProfile?.completedLessons || meta.completedLessons || [],
+        quizScores: serverProfile?.quizScores || meta.quizScores || {},
+        advancedUnlocked: serverProfile?.advancedUnlocked || meta.advancedUnlocked || false,
+        enrolledCourses: serverProfile?.enrolledCourses || meta.enrolledCourses || [],
+        coursesCompleted: serverProfile?.coursesCompleted || meta.coursesCompleted || [],
+        paymentHistory: serverProfile?.paymentHistory || meta.paymentHistory || [],
       };
 
       console.log(`✅ Profile built successfully:`, {

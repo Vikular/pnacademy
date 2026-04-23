@@ -83,6 +83,57 @@ const verifyUser = async (accessToken: string) => {
   return user;
 };
 
+// Verify admin: checks KV profile role first, then auth metadata as fallback.
+// Also auto-creates the KV profile when it doesn't exist yet (e.g. admin created
+// via supabase.auth.signUp directly rather than the /user/signup endpoint).
+const verifyAdmin = async (accessToken: string) => {
+  const user = await verifyUser(accessToken);
+
+  let profile = await kv.get(`user:${user.id}`);
+
+  if (!profile) {
+    // Auto-create from auth metadata so subsequent calls work
+    const meta = user.user_metadata || {};
+    profile = {
+      userId: user.id,
+      email: user.email || '',
+      firstName: meta.firstName || user.email?.split('@')[0] || 'User',
+      country: meta.country || '',
+      role: meta.role || 'student',
+      badge: meta.badge || 'Beginner',
+      createdAt: new Date().toISOString(),
+      progress: meta.progress || {
+        foundation: { completed: 0, total: 12 },
+        advanced: { completed: 0, total: 15 },
+        beginners: { completed: 0, total: 12 },
+        strategy: { completed: 0, total: 17 },
+      },
+      completedLessons: meta.completedLessons || [],
+      quizScores: meta.quizScores || {},
+      advancedUnlocked: meta.advancedUnlocked || false,
+      enrolledCourses: meta.enrolledCourses || [],
+      coursesCompleted: meta.coursesCompleted || [],
+      paymentHistory: meta.paymentHistory || [],
+    };
+    await kv.set(`user:${user.id}`, profile);
+    console.log(`✅ Auto-created KV profile for ${user.email} (role: ${profile.role})`);
+  }
+
+  // Accept role from KV profile OR from Supabase auth metadata as fallback
+  const effectiveRole = profile.role || user.user_metadata?.role;
+  if (effectiveRole !== 'admin') {
+    throw new Error('Admin access required');
+  }
+
+  // If KV role was missing but metadata says admin, sync the KV record
+  if (profile.role !== 'admin' && user.user_metadata?.role === 'admin') {
+    profile.role = 'admin';
+    await kv.set(`user:${user.id}`, profile);
+  }
+
+  return { user, profile };
+};
+
 // ==================== PUBLIC ENDPOINTS ====================
 
 // Health check endpoint
@@ -335,8 +386,37 @@ app.get("/make-server-0991178c/user/:userId", async (c) => {
       }
     }
 
-    const profile = await kv.get(`user:${userId}`);
+    let profile = await kv.get(`user:${userId}`);
     
+    // Auto-create KV profile from auth metadata if it doesn't exist yet
+    // (happens when admin is created via supabase.auth.signUp without server signup)
+    if (!profile && user.id === userId) {
+      const meta = user.user_metadata || {};
+      profile = {
+        userId: user.id,
+        email: user.email || '',
+        firstName: meta.firstName || user.email?.split('@')[0] || 'User',
+        country: meta.country || '',
+        role: meta.role || 'student',
+        badge: meta.badge || 'Beginner',
+        createdAt: new Date().toISOString(),
+        progress: meta.progress || {
+          foundation: { completed: 0, total: 12 },
+          advanced: { completed: 0, total: 15 },
+          beginners: { completed: 0, total: 12 },
+          strategy: { completed: 0, total: 17 },
+        },
+        completedLessons: meta.completedLessons || [],
+        quizScores: meta.quizScores || {},
+        advancedUnlocked: meta.advancedUnlocked || false,
+        enrolledCourses: meta.enrolledCourses || [],
+        coursesCompleted: meta.coursesCompleted || [],
+        paymentHistory: meta.paymentHistory || [],
+      };
+      await kv.set(`user:${userId}`, profile);
+      console.log(`✅ Auto-created KV profile for user ${userId} (role: ${profile.role})`);
+    }
+
     if (!profile) {
       return c.json({ error: "User profile not found" }, 404);
     }
@@ -863,6 +943,35 @@ app.post("/make-server-0991178c/upgrade-to-admin", async (c) => {
     userProfile.upgradedToAdminAt = new Date().toISOString();
     
     await kv.set(`user:${userProfile.userId}`, userProfile);
+
+    // Keep Supabase auth metadata in sync with KV role for frontend role detection
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL');
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+      if (supabaseUrl && supabaseServiceKey) {
+        const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+        const { error: authUpdateError } = await supabaseAdmin.auth.admin.updateUserById(
+          userProfile.userId,
+          {
+            user_metadata: {
+              firstName: userProfile.firstName || 'Admin',
+              country: userProfile.country || 'US',
+              role: 'admin',
+              badge: 'admin',
+              enrolledCourses: ['beginners', 'strategy'],
+              advancedUnlocked: true,
+            },
+          },
+        );
+
+        if (authUpdateError) {
+          console.error('⚠️ Failed to sync admin metadata in Supabase Auth:', authUpdateError);
+        }
+      }
+    } catch (syncError) {
+      console.error('⚠️ Error syncing admin metadata:', syncError);
+    }
     
     console.log('✅ User upgraded to admin:', email);
     

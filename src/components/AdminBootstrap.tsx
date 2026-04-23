@@ -92,7 +92,7 @@ export function AdminBootstrap({ accessToken, onLogout }: AdminBootstrapProps) {
           },
           body: JSON.stringify({
             email: email.trim().toLowerCase(),
-            secretKey: "pip-nation-2024-admin-upgrade",
+            secretKey: "pip-nation-admin-2024",
           }),
         }
       );

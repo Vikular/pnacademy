@@ -99,6 +99,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
       return;
     }
 
+    setIsLoading(true);
     try {
       const response = await fetch(`${apiUrl}/admin/users`, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -106,9 +107,15 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
       if (response.ok) {
         const data = await response.json();
         setUsers(data);
+      } else {
+        const err = await response.json().catch(() => ({}));
+        toast.error(`Failed to load users: ${err.error || response.statusText}`);
       }
     } catch (error) {
       console.error('Error loading users:', error);
+      toast.error('Network error loading users');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -125,9 +132,13 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
       if (response.ok) {
         const data = await response.json();
         setAnalytics(data);
+      } else {
+        const err = await response.json().catch(() => ({}));
+        toast.error(`Failed to load analytics: ${err.error || response.statusText}`);
       }
     } catch (error) {
       console.error('Error loading analytics:', error);
+      toast.error('Network error loading analytics');
     }
   };
 
@@ -144,9 +155,13 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
       if (response.ok) {
         const data = await response.json();
         setLiveActivity(data);
+      } else {
+        const err = await response.json().catch(() => ({}));
+        toast.error(`Failed to load activity: ${err.error || response.statusText}`);
       }
     } catch (error) {
       console.error('Error loading activity:', error);
+      toast.error('Network error loading activity');
     }
   };
 
@@ -441,10 +456,19 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
     toast.success('Data exported successfully!');
   };
 
+  // Build userId → "Name (email)" map for session display
+  const userLabelMap = Object.fromEntries(
+    users.map(u => [u.userId, `${u.firstName || ''} (${u.email})`])
+  );
+  const getUserLabel = (userId: string) =>
+    userLabelMap[userId] || userId;
+
   const filteredUsers = users.filter(user => {
-    const matchesSearch = searchTerm === '' || 
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.firstName.toLowerCase().includes(searchTerm.toLowerCase());
+    const email = (user.email || '').toLowerCase();
+    const name = (user.firstName || '').toLowerCase();
+    const matchesSearch = searchTerm === '' ||
+      email.includes(searchTerm.toLowerCase()) ||
+      name.includes(searchTerm.toLowerCase());
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
     return matchesSearch && matchesRole;
   });
@@ -718,11 +742,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
                     <div className="flex items-center gap-3">
                       <Avatar>
                         <AvatarFallback>
-                          {session.userId?.substring(0, 2).toUpperCase()}
+                          {(userLabelMap[session.userId]?.split(' ')[0] || session.userId)?.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-sm">{session.userId}</p>
+                        <p className="text-sm">{getUserLabel(session.userId)}</p>
                         <p className="text-xs text-gray-500">
                           {new Date(session.loginTime).toLocaleString()}
                         </p>
@@ -813,7 +837,19 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredUsers.map((user) => (
+                      {isLoading ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center py-8 text-gray-400">
+                            Loading users...
+                          </TableCell>
+                        </TableRow>
+                      ) : filteredUsers.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center py-8 text-gray-400">
+                            {users.length === 0 ? 'No users found. Users appear here once they log in.' : 'No users match the current filter.'}
+                          </TableCell>
+                        </TableRow>
+                      ) : filteredUsers.map((user) => (
                         <TableRow key={user.userId}>
                           <TableCell>
                             <input
@@ -956,7 +992,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
                           className="flex items-center justify-between p-3 border rounded-lg"
                         >
                           <div>
-                            <p className="text-sm">{session.userId}</p>
+                            <p className="text-sm">{getUserLabel(session.userId)}</p>
                             <p className="text-xs text-gray-500">
                               Logged in {new Date(session.loginTime).toLocaleTimeString()}
                             </p>

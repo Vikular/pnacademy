@@ -348,7 +348,9 @@
     </div>
 
     <script>
-        const API_URL = 'https://mkblwhxlrdcoflliwnyr.supabase.co/functions/v1/make-server-0991178c';
+        const API_URL = window.location.origin.includes('localhost')
+            ? 'http://localhost:54321/functions/v1/make-server-0991178c'
+            : `${window.location.origin}/functions/v1/make-server-0991178c`;
         
         const form = document.getElementById('adminForm');
         const alert = document.getElementById('alert');
@@ -442,7 +444,7 @@
                     },
                     body: JSON.stringify({
                         email: email.trim().toLowerCase(),
-                        secretKey: 'pip-nation-2024-admin-upgrade'
+                        secretKey: 'pip-nation-admin-2024'
                     })
                 });
                 

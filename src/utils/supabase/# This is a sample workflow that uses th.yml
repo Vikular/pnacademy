@@ -1,0 +1,30 @@
+# This is a sample workflow that uses the GitHub Actions runner to build and deploy a project.
+
+name: Build and Deploy
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          GITHUB_ACTIONS: true
+          VITE_BASE: /
+          CNAME_DOMAIN: pipnationacademy.com
