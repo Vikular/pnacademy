@@ -948,8 +948,9 @@ app.post("/make-server-0991178c/upgrade-to-admin", async (c) => {
     
     const email = rawEmail?.trim().toLowerCase();
     
-    // Simple security: require a secret key (you can change this)
-    if (secretKey !== 'pip-nation-admin-2024') {
+    // Simple security: require a secret key stored in environment variables
+    const validSecret = Deno.env.get('ADMIN_UPGRADE_SECRET');
+    if (!validSecret || secretKey !== validSecret) {
       return c.json({ error: "Invalid secret key" }, 403);
     }
     
@@ -1784,8 +1785,8 @@ app.get("/make-server-0991178c/admin/pending-payments", async (c) => {
     const auth = await requireAdminFromRequest(c);
     if (auth.error) return auth.error;
 
-    // Get all payment keys
-    const paymentKeys = await kv.getByPrefix('payment:');
+    // Get all payment receipt keys
+    const paymentKeys = await kv.getByPrefix('payment_receipt:');
     const pendingPayments = paymentKeys.filter((p: any) => p.status === 'pending');
 
     // Enrich with user details
