@@ -73,13 +73,30 @@ export default function App() {
 
   // Check for existing session on mount
   useEffect(() => {
-    const storedToken = localStorage.getItem("accessToken");
-    const storedUserId = localStorage.getItem("userId");
+    const restoreSession = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
 
-    if (storedToken && storedUserId) {
-      setAccessToken(storedToken);
-      fetchUserProfile(storedUserId, storedToken);
-    }
+        if (error || !data.session?.access_token || !data.session.user?.id) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("userId");
+          return;
+        }
+
+        const token = data.session.access_token;
+        const userId = data.session.user.id;
+        setAccessToken(token);
+        localStorage.setItem("accessToken", token);
+        localStorage.setItem("userId", userId);
+        await fetchUserProfile(userId, token);
+      } catch (sessionError) {
+        console.error("❌ Failed to restore session:", sessionError);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("userId");
+      }
+    };
+
+    restoreSession();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

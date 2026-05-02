@@ -33,6 +33,48 @@ const getSupabaseClient = () => {
   return createClient(url, key);
 };
 
+const getSupabaseServiceClient = () => {
+  const url = Deno.env.get('SUPABASE_URL');
+  const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+  if (!url || !key) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+  }
+
+  return createClient(url, key);
+};
+
+const buildUserProfile = (user: any, existingProfile?: any) => {
+  const meta = user?.user_metadata || {};
+  return {
+    userId: existingProfile?.userId || user?.id,
+    email: existingProfile?.email || user?.email || '',
+    firstName:
+      existingProfile?.firstName ||
+      meta.firstName ||
+      user?.email?.split('@')[0] ||
+      'User',
+    country: existingProfile?.country || meta.country || '',
+    role: existingProfile?.role || meta.role || 'student',
+    badge: existingProfile?.badge || meta.badge || 'Beginner',
+    accountStatus: existingProfile?.accountStatus || 'active',
+    createdAt:
+      existingProfile?.createdAt || user?.created_at || new Date().toISOString(),
+    progress: existingProfile?.progress || meta.progress || {
+      foundation: { completed: 0, total: 12 },
+      advanced: { completed: 0, total: 15 },
+      beginners: { completed: 0, total: 12 },
+      strategy: { completed: 0, total: 17 },
+    },
+    completedLessons: existingProfile?.completedLessons || meta.completedLessons || [],
+    quizScores: existingProfile?.quizScores || meta.quizScores || {},
+    advancedUnlocked: existingProfile?.advancedUnlocked || meta.advancedUnlocked || false,
+    enrolledCourses: existingProfile?.enrolledCourses || meta.enrolledCourses || [],
+    coursesCompleted: existingProfile?.coursesCompleted || meta.coursesCompleted || [],
+    paymentHistory: existingProfile?.paymentHistory || meta.paymentHistory || [],
+  };
+};
+
 // Note: KV store operations use SUPABASE_SERVICE_ROLE_KEY automatically
 // This is defined in kv_store.tsx and is necessary for database writes
 
@@ -54,28 +96,7 @@ const verifyUser = async (accessToken: string) => {
   // Ensure KV profile exists — auto-create from auth metadata if missing
   const existing = await kv.get(`user:${user.id}`);
   if (!existing) {
-    const meta = user.user_metadata || {};
-    const profile = {
-      userId: user.id,
-      email: user.email || '',
-      firstName: meta.firstName || user.email?.split('@')[0] || 'User',
-      country: meta.country || '',
-      role: meta.role || 'student',
-      badge: meta.badge || 'Beginner',
-      createdAt: new Date().toISOString(),
-      progress: meta.progress || {
-        foundation: { completed: 0, total: 12 },
-        advanced: { completed: 0, total: 15 },
-        beginners: { completed: 0, total: 12 },
-        strategy: { completed: 0, total: 17 },
-      },
-      completedLessons: meta.completedLessons || [],
-      quizScores: meta.quizScores || {},
-      advancedUnlocked: meta.advancedUnlocked || false,
-      enrolledCourses: meta.enrolledCourses || [],
-      coursesCompleted: meta.coursesCompleted || [],
-      paymentHistory: meta.paymentHistory || [],
-    };
+    const profile = buildUserProfile(user);
     await kv.set(`user:${user.id}`, profile);
     console.log(`✅ Auto-created KV profile for ${user.email} (role: ${profile.role})`);
   }
@@ -93,28 +114,7 @@ const verifyAdmin = async (accessToken: string) => {
 
   if (!profile) {
     // Auto-create from auth metadata so subsequent calls work
-    const meta = user.user_metadata || {};
-    profile = {
-      userId: user.id,
-      email: user.email || '',
-      firstName: meta.firstName || user.email?.split('@')[0] || 'User',
-      country: meta.country || '',
-      role: meta.role || 'student',
-      badge: meta.badge || 'Beginner',
-      createdAt: new Date().toISOString(),
-      progress: meta.progress || {
-        foundation: { completed: 0, total: 12 },
-        advanced: { completed: 0, total: 15 },
-        beginners: { completed: 0, total: 12 },
-        strategy: { completed: 0, total: 17 },
-      },
-      completedLessons: meta.completedLessons || [],
-      quizScores: meta.quizScores || {},
-      advancedUnlocked: meta.advancedUnlocked || false,
-      enrolledCourses: meta.enrolledCourses || [],
-      coursesCompleted: meta.coursesCompleted || [],
-      paymentHistory: meta.paymentHistory || [],
-    };
+    profile = buildUserProfile(user);
     await kv.set(`user:${user.id}`, profile);
     console.log(`✅ Auto-created KV profile for ${user.email} (role: ${profile.role})`);
   }
@@ -634,7 +634,62 @@ app.get("/make-server-0991178c/admin/users", async (c) => {
     if (auth.error) return auth.error;
 
     const users = await kv.getByPrefix('user:');
-    
+
+    try {
+      const supabase = getSupabaseServiceClient();
+      const usersById = new Map<string, any>();
+      const usersByEmail = new Map<string, any>();
+
+      for (const user of users) {
+        if (user?.userId) {
+          usersById.set(user.userId, user);
+        }
+        if (user?.email) {
+          usersByEmail.set(String(user.email).toLowerCase(), user);
+        }
+      }
+
+      const perPage = 100;
+      let page = 1;
+
+      while (true) {
+        const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
+        if (error) {
+          throw error;
+        }
+
+        const authUsers = data?.users || [];
+        for (const authUser of authUsers) {
+          const email = (authUser.email || '').toLowerCase();
+          const existingProfile = usersById.get(authUser.id) || usersByEmail.get(email);
+
+          if (!existingProfile) {
+            const profile = buildUserProfile(authUser);
+            await kv.set(`user:${authUser.id}`, profile);
+            users.push(profile);
+            usersById.set(profile.userId, profile);
+            if (profile.email) {
+              usersByEmail.set(String(profile.email).toLowerCase(), profile);
+            }
+          }
+        }
+
+        if (authUsers.length < perPage) {
+          break;
+        }
+
+        page += 1;
+      }
+    } catch (syncError) {
+      console.error('⚠️ Admin users sync warning:', syncError);
+    }
+
+    users.sort((a, b) => {
+      const aTime = new Date(a?.createdAt || 0).getTime();
+      const bTime = new Date(b?.createdAt || 0).getTime();
+      return bTime - aTime;
+    });
+
     return c.json(users);
   } catch (error) {
     console.error('❌ Get users error:', error);

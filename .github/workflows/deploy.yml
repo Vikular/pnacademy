@@ -30,12 +30,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-<<<<<<< HEAD
       - name: Build
-        run: npm run build
-=======
-      - name: Build
->>>>>>> 219cb59eb331c8383ce7d703e4d53d4090cd8da0
         env:
           GITHUB_ACTIONS: true
           VITE_BASE: /
@@ -64,8 +59,8 @@ jobs:
       - name: Prepare edge function files
         run: |
           mkdir -p supabase/functions/make-server-0991178c
-          cp src/supabase/functions/server/index.tsx supabase/functions/make-server-0991178c/index.ts
-          cp src/supabase/functions/server/kv_store.tsx supabase/functions/make-server-0991178c/kv_store.tsx
+          cp src/supabase/functions/make-server-0991178c/index.ts supabase/functions/make-server-0991178c/index.ts
+          cp src/supabase/functions/make-server-0991178c/kv_store.tsx supabase/functions/make-server-0991178c/kv_store.tsx
 
       - name: Deploy Edge Function
         run: supabase functions deploy make-server-0991178c --project-ref uhchrunehrcbhbyzpvwg
@@ -82,7 +77,3 @@ jobs:
       - name: Deploy to Pages
         id: deployment
         uses: actions/deploy-pages@v4
-<<<<<<< HEAD
-=======
-
->>>>>>> 219cb59eb331c8383ce7d703e4d53d4090cd8da0

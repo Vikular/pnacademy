@@ -50,11 +50,20 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
 
   const apiUrl = `https://${projectId}.supabase.co/functions/v1/make-server-0991178c`;
 
+  const handleUnauthorized = () => {
+    toast.error('Session expired or invalid. Please log in again.');
+    onLogout();
+  };
+
   const showMigrationNotice = () => {
     toast.info('Admin data actions are being migrated to the new Supabase project.');
   };
 
   useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
+
     if (!legacyAdminApiEnabled) {
       setIsLoading(false);
       setUsers([]);
@@ -72,9 +81,13 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
     } else if (currentTab === 'analytics') {
       loadAnalytics();
     }
-  }, [currentTab]);
+  }, [currentTab, accessToken]);
 
   const loadOverviewData = async () => {
+    if (!accessToken) {
+      return;
+    }
+
     if (!legacyAdminApiEnabled) {
       setIsLoading(false);
       return;
@@ -92,6 +105,11 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const loadUsers = async () => {
+    if (!accessToken) {
+      setIsLoading(false);
+      return;
+    }
+
     if (!legacyAdminApiEnabled) {
       setUsers([]);
       return;
@@ -106,6 +124,10 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
         const data = await response.json();
         setUsers(data);
       } else {
+        if (response.status === 401) {
+          handleUnauthorized();
+          return;
+        }
         const err = await response.json().catch(() => ({}));
         toast.error(`Failed to load users: ${err.error || response.statusText}`);
       }
@@ -118,6 +140,10 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const loadAnalytics = async () => {
+    if (!accessToken) {
+      return;
+    }
+
     if (!legacyAdminApiEnabled) {
       setAnalytics(null);
       return;
@@ -131,6 +157,10 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
         const data = await response.json();
         setAnalytics(data);
       } else {
+        if (response.status === 401) {
+          handleUnauthorized();
+          return;
+        }
         const err = await response.json().catch(() => ({}));
         toast.error(`Failed to load analytics: ${err.error || response.statusText}`);
       }
@@ -141,6 +171,10 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
   };
 
   const loadLiveActivity = async () => {
+    if (!accessToken) {
+      return;
+    }
+
     if (!legacyAdminApiEnabled) {
       setLiveActivity(null);
       return;
@@ -154,6 +188,10 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
         const data = await response.json();
         setLiveActivity(data);
       } else {
+        if (response.status === 401) {
+          handleUnauthorized();
+          return;
+        }
         const err = await response.json().catch(() => ({}));
         toast.error(`Failed to load activity: ${err.error || response.statusText}`);
       }
@@ -362,7 +400,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
       return;
     }
 
-    const confirmMessage = `âš ï¸ WARNING: This will permanently delete the user "${userEmail}" and all associated data including:\n\nâ€¢ User profile\nâ€¢ Payment history\nâ€¢ Sessions\nâ€¢ Course progress\nâ€¢ Payment receipts\n\nThis action CANNOT be undone.\n\nType "DELETE" to confirm:`;
+    const confirmMessage = `WARNING: This will permanently delete the user "${userEmail}" and all associated data including:\n\n* User profile\n* Payment history\n* Sessions\n* Course progress\n* Payment receipts\n\nThis action CANNOT be undone.\n\nType "DELETE" to confirm:`;
     
     const confirmation = prompt(confirmMessage);
     
@@ -420,7 +458,7 @@ export function EnhancedAdminDashboard({ accessToken, onLogout }: EnhancedAdminD
     toast.success('Data exported successfully!');
   };
 
-  // Build userId â†’ "Name (email)" map for session display
+  // Build userId -> "Name (email)" map for session display
   const userLabelMap = Object.fromEntries(
     users.map(u => [u.userId, `${u.firstName || ''} (${u.email})`])
   );

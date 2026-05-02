@@ -42,6 +42,11 @@ export function PendingPaymentsTab({ accessToken }: PendingPaymentsTabProps) {
   const apiUrl = `https://${projectId}.supabase.co/functions/v1/make-server-0991178c`;
 
   const loadPendingPayments = async () => {
+    if (!accessToken) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch(`${apiUrl}/admin/pending-payments`, {
@@ -54,6 +59,10 @@ export function PendingPaymentsTab({ accessToken }: PendingPaymentsTabProps) {
         const data = await response.json();
         setPendingPayments(data.pendingPayments || []);
       } else {
+        if (response.status === 401) {
+          toast.error('Session expired or invalid. Please log in again.');
+          return;
+        }
         toast.error('Failed to load pending payments');
       }
     } catch (error) {
@@ -69,6 +78,10 @@ export function PendingPaymentsTab({ accessToken }: PendingPaymentsTabProps) {
   }, [accessToken]);
 
   const viewReceipt = async (payment: PendingPayment) => {
+    if (!accessToken) {
+      return;
+    }
+
     setSelectedPayment(payment);
     setProcessing(true);
 
@@ -84,6 +97,10 @@ export function PendingPaymentsTab({ accessToken }: PendingPaymentsTabProps) {
         setReceiptUrl(data.receiptUrl);
         setShowReceiptModal(true);
       } else {
+        if (response.status === 401) {
+          toast.error('Session expired or invalid. Please log in again.');
+          return;
+        }
         toast.error('Failed to load receipt');
       }
     } catch (error) {
@@ -95,6 +112,10 @@ export function PendingPaymentsTab({ accessToken }: PendingPaymentsTabProps) {
   };
 
   const approvePayment = async (paymentId: string) => {
+    if (!accessToken) {
+      return;
+    }
+
     if (!confirm('Are you sure you want to approve this payment? The user will get immediate course access.')) {
       return;
     }
@@ -115,6 +136,10 @@ export function PendingPaymentsTab({ accessToken }: PendingPaymentsTabProps) {
         setShowReceiptModal(false);
         loadPendingPayments();
       } else {
+        if (response.status === 401) {
+          toast.error('Session expired or invalid. Please log in again.');
+          return;
+        }
         const error = await response.json();
         toast.error(error.error || 'Failed to approve payment');
       }
@@ -128,6 +153,7 @@ export function PendingPaymentsTab({ accessToken }: PendingPaymentsTabProps) {
 
   const rejectPayment = async () => {
     if (!selectedPayment) return;
+    if (!accessToken) return;
 
     if (!rejectionReason.trim()) {
       toast.error('Please provide a reason for rejection');
@@ -155,6 +181,10 @@ export function PendingPaymentsTab({ accessToken }: PendingPaymentsTabProps) {
         setRejectionReason('');
         loadPendingPayments();
       } else {
+        if (response.status === 401) {
+          toast.error('Session expired or invalid. Please log in again.');
+          return;
+        }
         const error = await response.json();
         toast.error(error.error || 'Failed to reject payment');
       }
