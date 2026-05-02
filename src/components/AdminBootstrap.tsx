@@ -12,8 +12,8 @@ interface AdminBootstrapProps {
 }
 
 export function AdminBootstrap({ accessToken, onLogout }: AdminBootstrapProps) {
-  const [email, setEmail] = useState("admin@pipnationacademy.com");
-  const [password, setPassword] = useState("Admin123!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("Admin");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{

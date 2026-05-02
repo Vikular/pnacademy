@@ -152,12 +152,6 @@ export default function App() {
         paymentHistory: serverProfile?.paymentHistory || meta.paymentHistory || [],
       };
 
-      console.log(`✅ Profile built successfully:`, {
-        userId: profile.userId,
-        email: profile.email,
-        role: profile.role,
-      });
-
       setUserProfile(profile);
 
       if (profile.role === "admin") {
@@ -264,23 +258,16 @@ export default function App() {
         toast.success("Welcome to Pip Nation Academy!");
       } else {
         // Sign in using Supabase client
-        console.log(
-          "🔐 Starting sign in with Supabase Auth...",
-        );
-        console.log("🔐 Login attempt with email:", email);
+        const { data, error } =
+          await supabase.auth.signInWithPassword({
+            email: email.trim().toLowerCase(),
+            password,
+          });
 
         // Check if this is the hardcoded admin attempting to login
         const isAdminCredentials = 
           email.trim().toLowerCase() === 'admin@pipnationacademy.com' && 
           password === 'Admin123!';
-
-        console.log("🔍 Before login - isAdminCredentials:", isAdminCredentials);
-
-        const { data, error } =
-          await supabase.auth.signInWithPassword({
-            email: email.trim().toLowerCase(), // Normalize email
-            password,
-          });
 
         if (error) {
           console.error("❌ Sign in error:", error);
@@ -289,12 +276,6 @@ export default function App() {
             JSON.stringify(error, null, 2),
           );
           
-          console.log("🔍 Debug - Checking admin credentials:");
-          console.log("  Email entered:", email);
-          console.log("  Email normalized:", email.trim().toLowerCase());
-          console.log("  Password entered:", password);
-          console.log("  Email match:", email.trim().toLowerCase() === 'admin@pipnationacademy.com');
-          console.log("  Password match:", password === 'Admin123!');
           console.log("  Error code:", error.code);
           console.log("  Error message:", error.message);
           
